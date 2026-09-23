@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AI for Human Flourishing — Interactive Idea Deck</title>
+  <meta name="description" content="An ultra-premium swipe-based idea generator exploring how AI could reduce human scarcity and enhance human freedom.">
+  <meta name="theme-color" content="#08090C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <style>
+    /* --------------------------------------------------
+       1. DESIGN SYSTEM & VARIABLES
+       -------------------------------------------------- */
+    :root {
+      --bg-main: #08090C;
+      --bg-surface: #101218;
+      --bg-glass: rgba(18, 22, 31, 0.72);
+      --bg-glass-card: rgba(22, 27, 38, 0.82);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(255, 255, 255, 0.18);
+      --border-highlight: rgba(138, 180, 248, 0.3);
+      
+      --text-primary: #F0F4F8;
+      --text-secondary: #9AA5B5;
+      --text-tertiary: #626D7D;
+      
+      --accent-blue: #4D8BFF;
+      --accent-cyan: #26D0CE;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --accent-emerald: #10B981;
+      --accent-indigo: #6366F1;
+      
+      --gradient-accent: linear-gradient(135deg, #4D8BFF 0%, #26D0CE 100%);
+      --gradient-card-overlay: linear-gradient(180deg, rgba(16,18,24,0) 0%, rgba(16,18,24,0.95) 85%);
+      
+      --shadow-subtle: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.6);
+      --shadow-glow: 0 0 40px rgba(77, 139, 255, 0.15);
+      
+      --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", "Roboto Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      
+      --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* --------------------------------------------------
+       2. BASE RESET & LAYOUT
+       -------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      inset: 0;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(77, 139, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 100%, rgba(38, 208, 206, 0.05) 0%, transparent 50%);
+    }
+
+    /* Focus styling for keyboard accessibility */
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid var(--accent-blue);
+      outline-offset: 3px;
+    }
+
+    /* --------------------------------------------------
+       3. TOP HEADER & NAVIGATION
+       -------------------------------------------------- */
+    .app-header {
+      width: 100%;
+      max-width: 1200px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--gradient-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(77, 139, 255, 0.3);
+    }
+
+    .brand-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: #FFF;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      display: none;
+    }
+
+    @media (min-width: 600px) {
+      .brand-subtitle { display: inline; }
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-color: var(--border-active);
+    }
+
+    .nav-btn.active {
+      background: rgba(77, 139, 255, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(77, 139, 255, 0.4);
+    }
+
+    .saved-count-badge {
+      background: var(--accent-blue);
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 2px;
+    }
+
+    /* --------------------------------------------------
+       4. CATEGORY / DISCOVERY FILTER BAR
+       -------------------------------------------------- */
+    .filter-bar-container {
+      width: 100%;
+      max-width: 1000px;
+      padding: 0 24px 12px 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 90;
+    }
+
+    .filter-bar-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      width: max-content;
+      margin: 0 auto;
+    }
+
+    .filter-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+
+    .filter-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .filter-chip.active {
+      background: var(--text-primary);
+      color: var(--bg-main);
+      border-color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* --------------------------------------------------
+       5. MAIN CONTAINER & SIDE PANELS (DESKTOP)
+       -------------------------------------------------- */
+    .app-viewport {
+      flex: 1;
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 10px 24px;
+      overflow: hidden;
+    }
+
+    .desktop-side-panel {
+      display: none;
+      flex: 1;
+      max-width: 300px;
+      padding: 24px;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .desktop-side-panel:hover {
+      opacity: 1;
+    }
+
+    @media (min-width: 1100px) {
+      .desktop-side-panel {
+        display: flex;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .panel-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .panel-stat-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .panel-stat-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* --------------------------------------------------
+       6. SWIPE CARD STACK ENGINE
+       -------------------------------------------------- */
+    .card-deck-container {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 100%;
+      max-height: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    @media (min-height: 750px) {
+      .card-deck-container {
+        max-height: 680px;
+      }
+    }
+
+    .idea-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-glass-card);
+      border: 1px solid var(--border-active);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(30px);
+      box-shadow: var(--shadow-card);
+      will-change: transform, opacity;
+      touch-action: none;
+      cursor: grab;
+      overflow: hidden;
+      transform-origin: center 120%;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.3s;
+    }
+
+    .idea-card.dragging {
+      cursor: grabbing;
+      transition: none !important;
+    }
+
+    /* Ambient card glow based on category */
+    .idea-card::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, var(--card-glow-color, rgba(77, 139, 255, 0.15)) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+    }
+
+    .card-content-wrapper {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* SWIPE FEEDBACK OVERLAYS */
+    .swipe-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.15s ease;
+    }
+
+    .swipe-overlay.save {
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    .swipe-overlay.pass {
+      background: rgba(244, 63, 94, 0.15);
+      border: 2px solid var(--accent-rose);
+      color: var(--accent-rose);
+    }
+
+    .swipe-overlay.explore {
+      background: rgba(77, 139, 255, 0.15);
+      border: 2px solid var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* --------------------------------------------------
+       7. CARD HEADER, BODY, & FOOTER
+       -------------------------------------------------- */
+    .card-top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: 1px;
+    }
+
+    .card-category-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--card-accent-color, var(--accent-blue));
+    }
+
+    .card-main-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .card-concept {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      font-weight: 400;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-quick-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .metric-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-tertiary);
+      margin-bottom: 2px;
+    }
+
+    .metric-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-bottom-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .explore-hint-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .explore-hint-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-active);
+    }
+
+    .explore-hint-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* --------------------------------------------------
+       8. BOTTOM CONTROL BAR (ACTION BUTTONS)
+       -------------------------------------------------- */
+    .controls-wrapper {
+      width: 100%;
+      max-width: 420px;
+      padding: 12px 24px 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      z-index: 90;
+    }
+
+    .action-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-spring);
+      box-shadow: var(--shadow-subtle);
+      position: relative;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.08);
+      border-color: var(--border-active);
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    .action-btn.btn-pass:hover {
+      background: rgba(244, 63, 94, 0.1);
+      border-color: var(--accent-rose);
+      color: var(--accent-rose);
+    }
+
+    .action-btn.btn-explore:hover {
+      background: rgba(77, 139, 255, 0.1);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .action-btn.btn-save:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    .action-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .keyboard-hint {
+      position: absolute;
+      bottom: -18px;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* --------------------------------------------------
+       9. DEEP EXPLORATION MODAL / DRAWER (SWIPE UP)
+       -------------------------------------------------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 8, 0.85);
+      backdrop-filter: blur(20px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    @media (min-width: 640px) {
+      .modal-backdrop {
+        align-items: center;
+      }
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .deep-modal {
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-active);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 32px 28px 40px 28px;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    @media (min-width: 640px) {
+      .deep-modal {
+        border-radius: var(--radius-xl);
+        max-height: 80vh;
+        transform: translateY(20px) scale(0.95);
+      }
+    }
+
+    .modal-backdrop.active .deep-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-drag-indicator {
+      width: 36px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin: -12px auto 20px auto;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text-primary);
+    }
+
+    .modal-section {
+      margin-bottom: 28px;
+    }
+
+    .modal-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-section-title.warning {
+      color: var(--accent-amber);
+    }
+
+    .modal-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* Reality Check Box */
+    .reality-check-box {
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 12px;
+    }
+
+    .reality-check-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .reality-check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: #E2E8F0;
+    }
+
+    .reality-check-item svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--accent-amber);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* Impact Multi-dimension Matrix */
+    .impact-matrix {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 500px) {
+      .impact-matrix {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .matrix-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+
+    .matrix-lbl {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .matrix-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* --------------------------------------------------
+       10. SAVED IDEAS & ABOUT OVERLAYS
+       -------------------------------------------------- */
+    .full-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-main);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .full-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .overlay-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .overlay-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Saved Cards List */
+    .saved-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .saved-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .saved-card-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: var(--transition-fast);
+    }
+
+    .saved-card-item:hover {
+      border-color: var(--border-active);
+    }
+
+    .saved-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .saved-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .saved-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .saved-btn-sm {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .saved-btn-sm:hover {
+      color: var(--text-primary);
+      border-color: var(--border-active);
+    }
+
+    .saved-btn-sm.delete:hover {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border-color: var(--accent-rose);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-tertiary);
+    }
+
+    .empty-state-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px auto;
+      opacity: 0.4;
+      fill: currentColor;
+    }
+
+    /* About Screen Formatting */
+    .about-article {
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .about-article h2 {
+      color: var(--text-primary);
+      font-size: 22px;
+      margin: 28px 0 12px 0;
+    }
+
+    .about-article p {
+      margin-bottom: 16px;
+    }
+
+    .about-article highlight {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    /* --------------------------------------------------
+       11. FIRST-LAUNCH INTRO OVERLAY
+       -------------------------------------------------- */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      background: #040507;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .intro-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 20px;
+    }
+
+    .intro-headline {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      color: var(--text-primary);
+      max-width: 650px;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-sub {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .intro-btn {
+      background: var(--text-primary);
+      color: var(--bg-main);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-spring);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+
+    .intro-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* --------------------------------------------------
+       12. UTILITY & TOAST NOTIFICATIONS
+       -------------------------------------------------- */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-active);
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-subtle);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 400;
+    }
+
+    .toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Reduced Motion Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .idea-card, .deep-modal, .full-overlay, .intro-overlay {
+        transition: opacity 0.1s ease !important;
+      }
+      .action-btn:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FIRST LAUNCH INTRO SCREEN -->
+  <div id="intro-overlay" class="intro-overlay">
+    <div class="intro-title">Project: AI for Human Flourishing</div>
+    <h1 class="intro-headline">What if AI could make basic necessities abundant?</h1>
+    <p class="intro-sub">Food. Shelter. Energy. Knowledge. Opportunity.<br>Explore practical and ambitious mechanisms to reduce human scarcity.</p>
+    <button class="intro-btn" id="start-btn">Explore Idea Deck</button>
+  </div>
+
+  <!-- HEADER NAVIGATION -->
+  <header class="app-header">
+    <div class="brand" id="brand-logo">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">Flourishing</div>
+      </div>
+      <span class="brand-subtitle">/ AI Idea Deck</span>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-btn" id="nav-saved-btn">
+        <span>Saved</span>
+        <span class="saved-count-badge" id="saved-badge">0</span>
+      </button>
+      <button class="nav-btn" id="nav-about-btn">About</button>
+    </div>
+  </header>
+
+  <!-- CATEGORY / DISCOVERY FILTER BAR -->
+  <div class="filter-bar-container">
+    <div class="filter-bar" id="filter-bar">
+      <!-- Dynamic Filter Chips inserted via JS -->
+    </div>
+  </div>
+
+  <!-- MAIN VIEWPORT WITH CARDS & SIDE PANELS -->
+  <main class="app-viewport">
+
+    <!-- Left Desktop Panel -->
+    <aside class="desktop-side-panel">
+      <div class="panel-card">
+        <div class="panel-title">Primary Objective</div>
+        <div class="panel-stat-desc">Reduce survival pressure & scarcity so every human has freedom to pursue meaningful creation, learning, and life.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-title">Deck Filter</div>
+        <div class="panel-stat-val" id="desktop-filter-name">ALL</div>
+        <div class="panel-stat-desc" id="desktop-deck-count">0 ideas in active deck</div>
+      </div>
+    </aside>
+
+    <!-- CENTER CARDS STACK ENGINE -->
+    <div class="card-deck-container" id="deck-container">
+      <!-- Swipe feedback overlays -->
+      <div class="swipe-overlay pass" id="overlay-pass">PASS</div>
+      <div class="swipe-overlay save" id="overlay-save">SAVE</div>
+      <div class="swipe-overlay explore" id="overlay-explore">EXPLORE</div>
+
+      <!-- Active Idea Cards dynamically populated here -->
+    </div>
+
+    <!-- Right Desktop Panel -->
+    <aside class="desktop-side-panel">
+      <div class="panel-card">
+        <div class="panel-title">Swipe Controls</div>
+        <div class="panel-stat-desc">
+          <strong>&larr; Left:</strong> Pass idea<br>
+          <strong>&rarr; Right:</strong> Save idea<br>
+          <strong>&uarr; Up:</strong> Deep explore<br>
+          <strong>&darr; Down:</strong> Next state
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-title">Core Philosophy</div>
+        <div class="panel-stat-desc">Technology is a mechanism, not a guarantee. Ideas require rigorous reality checks.</div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- BOTTOM CONTROLS BAR -->
+  <div class="controls-wrapper">
+    <button class="action-btn btn-pass" id="btn-pass" aria-label="Pass Idea (Left Arrow)">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      <span class="keyboard-hint">&larr;</span>
+    </button>
+
+    <button class="action-btn btn-explore" id="btn-explore" aria-label="Deep Explore Idea (Up Arrow)">
+      <svg viewBox="0 0 24 24"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>
+      <span class="keyboard-hint">&uarr;</span>
+    </button>
+
+    <button class="action-btn btn-save" id="btn-save" aria-label="Save Idea (Right Arrow)">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span class="keyboard-hint">&rarr;</span>
+    </button>
+  </div>
+
+  <!-- DEEP EXPLORATION MODAL (SWIPE UP / EXPLORE) -->
+  <div class="modal-backdrop" id="deep-modal-backdrop">
+    <div class="deep-modal" id="deep-modal">
+      <div class="modal-drag-indicator"></div>
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">&times;</button>
+      
+      <div class="modal-section">
+        <div class="modal-section-title" id="modal-cat">CATEGORY</div>
+        <h2 id="modal-title" style="font-size:24px; color:var(--text-primary); margin-bottom:12px;">Idea Title</h2>
+        <p class="modal-text" id="modal-explanation">Full explanation text...</p>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">How AI Contributes</div>
+        <p class="modal-text" id="modal-ai-role">AI role details...</p>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Implementation Path & Beneficiaries</div>
+        <p class="modal-text" id="modal-path">Implementation path details...</p>
+        <p class="modal-text" style="margin-top:8px;" id="modal-who">Who benefits...</p>
+      </div>
+
+      <!-- REALITY CHECK SECTION -->
+      <div class="modal-section">
+        <div class="modal-section-title warning">
+          <svg style="width:14px; height:14px; fill:currentColor" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+          Reality Check & Obstacles
+        </div>
+        <div class="reality-check-box">
+          <p class="modal-text" style="color:var(--text-primary); font-weight:600;" id="modal-obstacle">Main Obstacle</p>
+          <ul class="reality-check-list" id="modal-reality-list">
+            <!-- Reality points injected here -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- IMPACT DIMENSION MATRIX -->
+      <div class="modal-section">
+        <div class="modal-section-title">Impact Matrix & Horizon</div>
+        <div class="impact-matrix">
+          <div class="matrix-item">
+            <div class="matrix-lbl">Potential Reach</div>
+            <div class="matrix-val" id="matrix-reach">Global</div>
+          </div>
+          <div class="matrix-item">
+            <div class="matrix-lbl">Time Horizon</div>
+            <div class="matrix-val" id="matrix-time">1-5 Years</div>
+          </div>
+          <div class="matrix-item">
+            <div class="matrix-lbl">AI Leverage</div>
+            <div class="matrix-val" id="matrix-leverage">Fundamental</div>
+          </div>
+          <div class="matrix-item">
+            <div class="matrix-lbl">Feasibility</div>
+            <div class="matrix-val" id="matrix-feasibility">High</div>
+          </div>
+          <div class="matrix-item">
+            <div class="matrix-lbl">Resource Needs</div>
+            <div class="matrix-val" id="matrix-resources">Moderate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Why This Matters</div>
+        <p class="modal-text" id="modal-why" style="font-style:italic; color:var(--text-primary);">Why matters text...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVED IDEAS OVERLAY -->
+  <div class="full-overlay" id="saved-overlay">
+    <div class="overlay-header">
+      <div class="overlay-title">Saved Ideas</div>
+      <div style="display:flex; gap:12px;">
+        <button class="saved-btn-sm delete" id="clear-saved-btn">Clear All</button>
+        <button class="nav-btn" id="close-saved-btn">Close</button>
+      </div>
+    </div>
+    <div class="overlay-content">
+      <div class="saved-grid" id="saved-grid">
+        <!-- Saved items injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT OVERLAY -->
+  <div class="full-overlay" id="about-overlay">
+    <div class="overlay-header">
+      <div class="overlay-title">About Project</div>
+      <button class="nav-btn" id="close-about-btn">Close</button>
+    </div>
+    <div class="overlay-content">
+      <article class="about-article">
+        <h2>Exploring Human Flourishing</h2>
+        <p>If AI dramatically increases humanity's productive capability, how could we use that capability to ensure that every person has reliable access to basic food, shelter, energy, and knowledge—reducing survival pressure and giving people greater freedom to pursue lives they genuinely care about?</p>
+        
+        <h2>A Tool for Possibility, Not Idealism</h2>
+        <p>This application is not intended to claim that artificial intelligence will automatically solve poverty, eliminate scarcity, or guarantee universal prosperity. Technology alone does not determine social outcomes.</p>
+        <p>Real-world implementation depends on economics, physical infrastructure, institutions, policy, human governance, and cultural alignment. Therefore, every serious idea in this deck includes a <highlight>Reality Check</highlight> detailing potential pitfalls, resource requirements, and unintended consequences.</p>
+
+        <h2>How to Interact</h2>
+        <p>• <strong>Swipe Right / Click Save:</strong> Store an idea in your session library.<br>
+           • <strong>Swipe Left / Click Pass:</strong> Move past the current idea.<br>
+           • <strong>Swipe Up / Click Explore:</strong> Dive into implementation, risks, and feasibility models.<br>
+           • <strong>Filter Bar:</strong> Narrow down ideas by focus areas like Food, Shelter, Abundance, or Robotics.</p>
+
+        <p style="margin-top:30px; font-size:13px; color:var(--text-tertiary);">Version 1.0 — Single-file, client-side offline web application.</p>
+      </article>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">Notification</div>
+
+  <!-- --------------------------------------------------
+       13. JAVASCRIPT: IDEA DATABASE & ENGINE
+       -------------------------------------------------- -->
+  <script>
+    /* ==================================================
+       BUILT-IN SUBSTANTIAL IDEA DATABASE
+       ================================================== */
+    const IDEAS_DATABASE = [
+      {
+        id: "idea-001",
+        number: "001",
+        category: "SHELTER",
+        mode: ["SHELTER", "ABUNDANCE", "ROBOTICS", "BIG IDEAS"],
+        title: "Autonomous Modular Housing Factories",
+        concept: "AI-coordinated mobile modular construction hubs that dynamically adjust structural designs to local terrain, materials, and demand to drastically lower shelter costs.",
+        explanation: "By deploying autonomous robotic casting and framing units directly adjacent to housing development sites, structural components can be fabricated on-demand using local geopolymers or recycled aggregates, eliminating supply chain overhead.",
+        aiRole: "Computer vision optimizes structural density for local weather and seismic risks; reinforcement learning manages multi-robot coordination for error-free assembly.",
+        whoBenefits: "Unsheltered individuals, low-income families, and rapidly urbanizing communities.",
+        path: "Prototype mobile robotic concrete printing rigs; partner with municipal land trusts for pilot infill housing.",
+        obstacle: "Restrictive municipal zoning codes, building code approvals, and high initial capital expenditure for robotic fleets.",
+        realityCheck: [
+          "Requires significant local energy grid access for heavy robotic machinery.",
+          "Building codes in many jurisdictions do not yet recognize automated structural engineering signatures.",
+          "Displaces traditional manual trade labor if workforce transitions aren't planned."
+        ],
+        timeHorizon: "1–5 years",
+        reach: "Global",
+        feasibility: "High",
+        aiLeverage: "Fundamental",
+        resourceRequirement: "High Capital / Moderate Energy",
+        whyMatters: "Lowering the cost of durable shelter by 70% fundamentally removes the single largest financial pressure on human households."
+      },
+      {
+        id: "idea-002",
+        number: "002",
+        category: "FOOD",
+        mode: ["FOOD", "ABUNDANCE", "ROBOTICS", "START NOW"],
+        title: "Autonomous Hyper-Local Micro-Farms",
+        concept: "Decentralized automated micro-greenhouses managed by AI vision systems that optimize water, mineral nutrient cycles, and zero-pesticide yield in urban vacant lots.",
+        explanation: "Modular, containerized vertical farming units controlled by edge-AI microcontrollers that inspect every plant leaf individually, adjusting spectral lighting and hydroponic dosing in real time.",
+        aiRole: "Multi-spectral leaf analysis detects nutrient deficiencies days before visual signs; predictive microclimate algorithms minimize water and power usage.",
+        whoBenefits: "Urban food deserts, low-income neighborhoods, and isolated rural communities.",
+        path: "Open-source the sensor array and computer vision model; partner with community garden networks.",
+        obstacle: "High electricity costs for indoor lighting and vulnerability to power grid interruptions.",
+        realityCheck: [
+          "Nutrient solutions currently rely on industrial chemical supply chains.",
+          "High energy consumption per calorie compared to traditional open-field staple crops.",
+          "Limited to leafy greens, berries, and herbs; staple grains remain difficult to grow economically indoors."
+        ],
+        timeHorizon: "Now",
+        reach: "Regional",
+        feasibility: "Very High",
+        aiLeverage: "Important",
+        resourceRequirement: "Low Capital / High Energy",
+        whyMatters: "Guarantees fresh, pathogen-free, nutrient-dense fresh food within walking distance of urban residents."
+      },
+      {
+        id: "idea-003",
+        number: "003",
+        category: "ENERGY",
+        mode: ["ABUNDANCE", "BIG IDEAS", "GLOBAL"],
+        title: "Predictive Microgrid Peer Energy Sharing",
+        concept: "AI agents that trade distributed solar, wind, and battery power between neighboring homes in real time, turning residential areas into self-healing grid resilience networks.",
+        explanation: "Autonomous smart-meter agents anticipate home energy consumption patterns and hyper-local solar production minutes in advance, dynamically routing excess power to nearby homes or local water heaters before energy is lost in high-voltage transmission.",
+        aiRole: "Probabilistic forecasting of household behavior and weather patterns paired with high-frequency micro-currency clearing.",
+        whoBenefits: "Suburban communities, off-grid villages, and households facing seasonal energy poverty.",
+        path: "Deploy software layer atop existing residential solar storage systems; run regulatory sandbox trials.",
+        obstacle: "Monopolistic utility regulation and legacy electric grid infrastructure limitations.",
+        realityCheck: [
+          "Utilities frequently lobby against peer-to-peer energy trading models.",
+          "Requires reliable local mesh connectivity or internet bandwidth.",
+          "Battery degradation models must be precise to avoid unintended asset wear."
+        ],
+        timeHorizon: "1–5 years",
+        reach: "Regional",
+        feasibility: "High",
+        aiLeverage: "Important",
+        resourceRequirement: "Software Heavy / Minimal Physical Infrastructure",
+        whyMatters: "Dramatically reduces electric bill volatility and prevents catastrophic blackout disruptions during extreme weather."
+      },
+      {
+        id: "idea-004",
+        number: "004",
+        category: "WATER",
+        mode: ["COMMUNITY", "START NOW"],
+        title: "Acoustic AI Water Loss Detection Systems",
+        concept: "Low-cost non-invasive acoustic sensors paired with AI to listen to municipal water networks, identifying microscopic underground pipe leaks long before surface eruptions occur.",
+        explanation: "Millions of gallons of purified municipal water are lost daily to unseen sub-surface pipe leaks. Inexpensive acoustic sensors clamped to fire hydrants continuously stream ambient audio to neural networks trained to detect leak frequencies.",
+        aiRole: "Signal processing filtering out ambient city traffic noise to isolate precise acoustic cavitation profiles of escaping pressurized water.",
+        whoBenefits: "Drought-prone municipalities, municipal utility ratepayers, and water-stressed communities.",
+        path: "Scale retrofittable clamp-on sensors across aging municipal water infrastructures.",
+        obstacle: "Budget constraints and slow procurement cycles within municipal water authorities.",
+        realityCheck: [
+          "Requires municipal utility buy-in and willingness to deploy repair crews once leaks are identified.",
+          "Acoustic signatures vary based on pipe material (cast iron vs PVC).",
+          "Does not solve water source depletion by itself."
+        ],
+        timeHorizon: "Now",
+        reach: "National",
+        feasibility: "Very High",
+        aiLeverage: "Helpful",
+        resourceRequirement: "Low Cost / High Municipal Return",
+        whyMatters: "Prevents up to 30% water loss in legacy cities, preserving precious freshwater reservoirs for human consumption."
+      },
+      {
+        id: "idea-005",
+        number: "005",
+        category: "EDUCATION",
+        mode: ["ABUNDANCE", "COMMUNITY", "START NOW"],
+        title: "Universal Offline AI Literacy Socratic Tutors",
+        concept: "Localized, voice-driven AI tutors running on low-cost offline tablets, delivering personalized mastery-based education in native regional dialects.",
+        explanation: "A open-weights LLM compressed to run locally on $50 hardware. It acts as an infinitely patient Socratic tutor, adapting pedagogical pacing to a learner's exact cognitive background without requiring internet connectivity.",
+        aiRole: "On-device speech-to-speech processing and personalized learning path synthesis without external telemetry.",
+        whoBenefits: "Children and adults in remote, rural, or underfunded school districts worldwide.",
+        path: "Optimize open quantized models; package with solar-chargeable ruggedized tablets.",
+        obstacle: "Ensuring cultural nuance, preventing halluicinated facts, and physical distribution in isolated regions.",
+        realityCheck: [
+          "AI tutors lack emotional empathy and human social bonding provided by real human mentorship.",
+          "Hallucination risks require rigorous verification layers for STEM topics.",
+          "Requires hardware deployment funding and maintenance."
+        ],
+        timeHorizon: "Now",
+        reach: "Global",
+        feasibility: "Very High",
+        aiLeverage: "Fundamental",
+        resourceRequirement: "Low Hardware Cost / High Open Software Utility",
+        whyMatters: "Democratizes world-class personalized tutoring to every human child regardless of zip code or family wealth."
+      },
+      {
+        id: "idea-006",
+        number: "006",
+        category: "HEALTH",
+        mode: ["START NOW", "GLOBAL"],
+        title: "Autonomous Early Disease Diagnostic Kiosks",
+        concept: "Community diagnostic booths using non-invasive thermal imaging, retinal scanning, and voice biomarkers to detect multi-disease risks before symptoms escalate.",
+        explanation: "Walk-in automated kiosks located in pharmacies or community centers that perform 5-minute health checkups, identifying markers for cardiovascular disease, diabetic retinopathy, and respiratory illnesses.",
+        aiRole: "Multimodal fusion of visual, acoustic, and thermal sensor data to flag statistical health anomalies for physician review.",
+        whoBenefits: "Uninsured populations, rural communities, and overworked primary care networks.",
+        path: "Deploy in community centers; integrate with telemedicine follow-up networks.",
+        obstacle: "Regulatory medical device clearances and privacy concerns around biometric health data handling.",
+        realityCheck: [
+          "False positives can induce psychological anxiety and overload secondary care networks.",
+          "Requires strict data privacy sandboxing to prevent insurance discrimination.",
+          "Cannot replace physical biopsy or hands-on clinical medical examination."
+        ],
+        timeHorizon: "1–5 years",
+        reach: "Global",
+        feasibility: "High",
+        aiLeverage: "Fundamental",
+        resourceRequirement: "Moderate Hardware / High Software Validation",
+        whyMatters: "Shifts medicine from reactive, catastrophic late-stage hospital care to accessible preventive wellness."
+      },
+      {
+        id: "idea-007",
+        number: "007",
+        category: "LOGISTICS",
+        mode: ["FOOD", "ABUNDANCE", "COMMUNITY"],
+        title: "Zero-Waste Perishable Food Routing Engine",
+        concept: "An intelligent dynamic logistics system matching surplus commercial food supply with localized emergency hunger relief hubs in real time.",
+        explanation: "Connects grocers, farms, and restaurants directly to neighborhood food banks and micro-pantry distribution networks, routing automated delivery vehicles before fresh food reaches expiration.",
+        aiRole: "Predictive inventory expiry modeling and dynamic routing optimization based on traffic, storage refrigeration, and immediate local demand.",
+        whoBenefits: "Food banks, low-income families, and municipal environmental services.",
+        path: "Partner with regional grocery chains and community food rescue volunteer networks.",
+        obstacle: "Liability fears among food businesses and fragmented local logistics capacity.",
+        realityCheck: [
+          "Good Samaritan food donation laws must protect participating businesses from frivolous claims.",
+          "Cold-chain maintenance during transport remains a physical bottleneck.",
+          "Does not address underlying systemic economic income inequality."
+        ],
+        timeHorizon: "Now",
+        reach: "Regional",
+        feasibility: "Very High",
+        aiLeverage: "Important",
+        resourceRequirement: "Low Physical Cost / High Network Coordination",
+        whyMatters: "Eliminates agricultural food waste while simultaneously ending immediate local urban hunger."
+      },
+      {
+        id: "idea-008",
+        number: "008",
+        category: "ROBOTICS",
+        mode: ["ROBOTICS", "MOONSHOTS", "BIG IDEAS"],
+        title: "Autonomous Wildfire Defense & Reforestation Swarms",
+        concept: "Swarms of autonomous aerial and ground robots that monitor forests for ignition spots and systematically plant resilient native ecosystems.",
+        explanation: "Continuous environmental monitoring by long-endurance solar drones detects ember ignitions within seconds. Ground robots then thin dry underbrush safely and plant biodiverse climate-resilient seed pods across burnt topographies.",
+        aiRole: "Swarm autonomy, computer vision ignition isolation, and soil micro-biome suitability mapping.",
+        whoBenefits: "Forest communities, water watershed basins, and global carbon sinks.",
+        path: "Develop specialized drone payloads; run trials with state forestry agencies.",
+        obstacle: "Airspace safety regulations, harsh thermal environments, and battery flight duration limits.",
+        realityCheck: [
+          "High loss rates for hardware operating near active thermal zones.",
+          "Monoculture planting risks if seed selection models fail to ensure genetic diversity.",
+          "Requires continuous FAA/ICAO regulatory waivers for autonomous swarm operation."
+        ],
+        timeHorizon: "5–15 years",
+        reach: "Global",
+        feasibility: "Moderate",
+        aiLeverage: "Fundamental",
+        resourceRequirement: "High Robotic Hardware / Complex Field Ops",
+        whyMatters: "Protects natural habitats, saves human lives, and restores global forest ecosystems automatically."
+      },
+      {
+        id: "idea-009",
+        number: "009",
+        category: "SCIENCE",
+        mode: ["MOONSHOTS", "BIG IDEAS"],
+        title: "AI-Driven Closed-Loop Materials Discovery Labs",
+        concept: "Robotic chemistry laboratories guided by generative AI to synthesize novel low-cost superconductors, battery chemistries, and structural carbon-capture materials.",
+        explanation: "AI models propose chemical compound candidates; automated robotic liquid handlers immediately synthesize and test the materials, feeding physical experimental results back into the neural model within hours.",
+        aiRole: "Generative chemical property forecasting and closed-loop robotic experiment execution.",
+        whoBenefits: "Clean energy developers, industrial manufacturing, and humanity's climate transition.",
+        path: "Establish open university research consortia around autonomous chemistry labs.",
+        obstacle: "High capital cost of high-throughput automated physical lab synthesis equipment.",
+        realityCheck: [
+          "Physical synthesis verification often encounters unexpected side reactions not modeled digitally.",
+          "High initial lab setup expense ($10M+ per automated lab floor).",
+          "Patent lockups could restrict public benefit if discoveries are privatized exclusively."
+        ],
+        timeHorizon: "1–5 years",
+        reach: "Global",
+        feasibility: "High",
+        aiLeverage: "Fundamental",
+        resourceRequirement: "Very High Capital / Specialized Research Infrastructure",
+        whyMatters: "Accelerates scientific breakthroughs in clean energy and materials science from decades to months."
+      },
+      {
+        id: "idea-010",
+        number: "010",
+        category: "GOVERNANCE",
+        mode: ["COMMUNITY", "ABUNDANCE"],
+        title: "Transparent Participatory Public Resource Allocator",
+        concept: "An open, cryptographic public budget platform where citizens propose civil infrastructure, and AI models verify feasibility and cost transparency.",
+        explanation: "Municipalities allocate participatory budget funds directly through an accessible digital dashboard. AI tools analyze proposed infrastructure projects (e.g., bike paths, public parks, repairs), breaking down realistic costs and identifying regulatory conflicts automatically.",
+        aiRole: "Automated cost estimation, environmental impact pre-screening, and duplicate proposal clustering.",
+        whoBenefits: "Local citizens, municipal taxpayers, and disenfranchised neighborhood groups.",
+        path: "Deploy open-source civic portal software for progressive medium-sized city councils.",
+        obstacle: "Political inertia, digital divide among elderly voters, and susceptibility to local lobbyist influence.",
+        realityCheck: [
+          "Risk of algorithmic bias in pre-screening feasibility scores if training data reflects historical neglect.",
+          "Requires digital access literacy for all demographic groups.",
+          "Does not eliminate municipal political corruption without strong legal enforcement."
+        ],
+        timeHorizon: "1–5 years",
+        reach: "Regional",
+        feasibility: "Very High",
+        aiLeverage: "Helpful",
+        resourceRequirement: "Low Physical Cost / High Civic Trust Needed",
+        whyMatters: "Restores human trust in public institutions while optimizing municipal tax dollars for real public welfare."
+      }
+    ];
+
+    /* ==================================================
+       STATE MANAGEMENT & LOCAL STORAGE
+       ================================================== */
+    let currentDeck = [...IDEAS_DATABASE];
+    let currentIndex = 0;
+    let savedIdeas = JSON.parse(localStorage.getItem("flourishing_saved_ideas") || "[]");
+    let currentFilter = "ALL";
+
+    // DOM Elements
+    const deckContainer = document.getElementById("deck-container");
+    const overlayPass = document.getElementById("overlay-pass");
+    const overlaySave = document.getElementById("overlay-save");
+    const overlayExplore = document.getElementById("overlay-explore");
+    
+    const filterBar = document.getElementById("filter-bar");
+    const savedBadge = document.getElementById("saved-badge");
+    const toast = document.getElementById("toast");
+
+    // Modal & Overlay elements
+    const deepModalBackdrop = document.getElementById("deep-modal-backdrop");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
+    
+    const savedOverlay = document.getElementById("saved-overlay");
+    const closeSavedBtn = document.getElementById("close-saved-btn");
+    const savedGrid = document.getElementById("saved-grid");
+    const clearSavedBtn = document.getElementById("clear-saved-btn");
+
+    const aboutOverlay = document.getElementById("about-overlay");
+    const closeAboutBtn = document.getElementById("close-about-btn");
+    const navAboutBtn = document.getElementById("nav-about-btn");
+    const navSavedBtn = document.getElementById("nav-saved-btn");
+
+    const introOverlay = document.getElementById("intro-overlay");
+    const startBtn = document.getElementById("start-btn");
+
+    /* ==================================================
+       INIT & CATEGORY FILTERS SETUP
+       ================================================== */
+    const CATEGORIES = [
+      "ALL", "FOR YOU", "FOOD", "SHELTER", "ENERGY", "WATER", 
+      "ABUNDANCE", "ROBOTICS", "START NOW", "BIG IDEAS", "COMMUNITY"
+    ];
+
+    function initFilters() {
+      filterBar.innerHTML = "";
+      CATEGORIES.forEach(cat => {
+        const chip = document.createElement("button");
+        chip.className = `filter-chip ${cat === currentFilter ? 'active' : ''}`;
+        chip.textContent = cat;
+        chip.onclick = () => applyFilter(cat);
+        filterBar.appendChild(chip);
+      });
+    }
+
+    function applyFilter(cat) {
+      currentFilter = cat;
+      initFilters();
+
+      if (cat === "ALL" || cat === "FOR YOU") {
+        currentDeck = [...IDEAS_DATABASE];
+      } else {
+        currentDeck = IDEAS_DATABASE.filter(idea => 
+          idea.category === cat || (idea.mode && idea.mode.includes(cat))
+        );
+      }
+
+      currentIndex = 0;
+      updateDesktopSidePanel();
+      renderStack();
+      showToast(`Filter applied: ${cat}`);
+    }
+
+    function updateDesktopSidePanel() {
+      document.getElementById("desktop-filter-name").textContent = currentFilter;
+      document.getElementById("desktop-deck-count").textContent = `${currentDeck.length} ideas in active deck`;
+    }
+
+    /* ==================================================
+       CARD RENDER & STACK ENGINE
+       ================================================== */
+    function renderStack() {
+      // Clear existing cards
+      const existingCards = deckContainer.querySelectorAll(".idea-card");
+      existingCards.forEach(c => c.remove());
+
+      if (currentDeck.length === 0 || currentIndex >= currentDeck.length) {
+        renderEmptyDeckState();
+        return;
+      }
+
+      // Render top card and next card for smooth stack preview
+      const topIdea = currentDeck[currentIndex];
+      const nextIdea = currentDeck[currentIndex + 1];
+
+      if (nextIdea) {
+        const nextCardEl = createCardElement(nextIdea, false);
+        deckContainer.appendChild(nextCardEl);
+      }
+
+      const topCardEl = createCardElement(topIdea, true);
+      deckContainer.appendChild(topCardEl);
+
+      setupCardInteractions(topCardEl);
+      updateSavedBadge();
+    }
+
+    function createCardElement(idea, isTop) {
+      const card = document.createElement("div");
+      card.className = "idea-card";
+      card.id = `card-${idea.id}`;
+
+      if (!isTop) {
+        card.style.transform = "scale(0.94) translateY(18px)";
+        card.style.opacity = "0.6";
+        card.style.pointerEvents = "none";
+      }
+
+      // Accent color dynamically derived
+      const accent = getCategoryColor(idea.category);
+      card.style.setProperty("--card-accent-color", accent);
+      card.style.setProperty("--card-glow-color", accent + "22");
+
+      card.innerHTML = `
+        <div class="card-content-wrapper">
+          <div class="card-top-meta">
+            <span class="card-num">IDEA #${idea.number}</span>
+            <span class="card-category-badge">${idea.category}</span>
+          </div>
+
+          <div class="card-main-body">
+            <h2 class="card-title">${idea.title}</h2>
+            <p class="card-concept">${idea.concept}</p>
+            
+            <div class="card-quick-metrics">
+              <div class="metric-box">
+                <span class="metric-label">Reach</span>
+                <span class="metric-val">${idea.reach}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Horizon</span>
+                <span class="metric-val">${idea.timeHorizon}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">AI Role</span>
+                <span class="metric-val">${idea.aiLeverage}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-bottom-actions">
+            <button class="explore-hint-btn" onclick="openDeepModal('${idea.id}')">
+              <span>Deep Explore Idea</span>
+              <svg viewBox="0 0 24 24"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function renderEmptyDeckState() {
+      const emptyCard = document.createElement("div");
+      emptyCard.className = "idea-card";
+      emptyCard.style.cursor = "default";
+      emptyCard.innerHTML = `
+        <div class="card-content-wrapper" style="text-align:center; justify-content:center; gap:16px;">
+          <svg class="empty-state-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <h2 class="card-title">You've reached the end</h2>
+          <p class="card-concept">You have reviewed all ideas in this category.</p>
+          <button class="intro-btn" onclick="applyFilter('ALL')" style="margin-top:12px; padding:10px 24px;">Reset Deck</button>
+        </div>
+      `;
+      deckContainer.appendChild(emptyCard);
+    }
+
+    function getCategoryColor(cat) {
+      switch(cat) {
+        case 'FOOD': return 'var(--accent-emerald)';
+        case 'SHELTER': return 'var(--accent-blue)';
+        case 'ENERGY': return 'var(--accent-amber)';
+        case 'WATER': return 'var(--accent-cyan)';
+        case 'EDUCATION': return 'var(--accent-indigo)';
+        case 'HEALTH': return 'var(--accent-rose)';
+        default: return 'var(--accent-blue)';
+      }
+    }
+
+    /* ==================================================
+       TOUCH / MOUSE SWIPE ENGINE
+       ================================================== */
+    function setupCardInteractions(card) {
+      let startX = 0, startY = 0;
+      let currentX = 0, currentY = 0;
+      let isDragging = false;
+
+      function onStart(e) {
+        isDragging = true;
+        card.classList.add("dragging");
+        const touch = e.touches ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const touch = e.touches ? e.touches[0] : e;
+        currentX = touch.clientX - startX;
+        currentY = touch.clientY - startY;
+
+        const rotation = currentX * 0.05;
+        card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotation}deg)`;
+
+        // Visual feedback overlays
+        const threshold = 60;
+        if (currentX > threshold) {
+          overlaySave.style.opacity = Math.min((currentX - threshold) / 80, 1);
+          overlayPass.style.opacity = 0;
+          overlayExplore.style.opacity = 0;
+        } else if (currentX < -threshold) {
+          overlayPass.style.opacity = Math.min((-currentX - threshold) / 80, 1);
+          overlaySave.style.opacity = 0;
+          overlayExplore.style.opacity = 0;
+        } else if (currentY < -threshold) {
+          overlayExplore.style.opacity = Math.min((-currentY - threshold) / 80, 1);
+          overlaySave.style.opacity = 0;
+          overlayPass.style.opacity = 0;
+        } else {
+          overlaySave.style.opacity = 0;
+          overlayPass.style.opacity = 0;
+          overlayExplore.style.opacity = 0;
+        }
+      }
+
+      function onEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        card.classList.remove("dragging");
+
+        // Reset overlays
+        overlaySave.style.opacity = 0;
+        overlayPass.style.opacity = 0;
+        overlayExplore.style.opacity = 0;
+
+        const swipeThreshold = 100;
+
+        if (currentX > swipeThreshold) {
+          handleSwipeRight(card);
+        } else if (currentX < -swipeThreshold) {
+          handleSwipeLeft(card);
+        } else if (currentY < -swipeThreshold) {
+          handleSwipeUp(card);
+        } else {
+          // Snap back
+          card.style.transform = "";
+        }
+
+        currentX = 0;
+        currentY = 0;
+      }
+
+      // Event Listeners
+      card.addEventListener("touchstart", onStart, { passive: true });
+      card.addEventListener("touchmove", onMove, { passive: true });
+      card.addEventListener("touchend", onEnd);
+
+      card.addEventListener("mousedown", onStart);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onEnd);
+    }
+
+    /* ==================================================
+       SWIPE ACTION HANDLERS
+       ================================================== */
+    function handleSwipeLeft(card) {
+      card.style.transform = "translate3d(-150%, 0, 0) rotate(-20deg)";
+      card.style.opacity = "0";
+      setTimeout(() => {
+        currentIndex++;
+        renderStack();
+      }, 300);
+    }
+
+    function handleSwipeRight(card) {
+      card.style.transform = "translate3d(150%, 0, 0) rotate(20deg)";
+      card.style.opacity = "0";
+      
+      const currentIdea = currentDeck[currentIndex];
+      saveIdea(currentIdea);
+
+      setTimeout(() => {
+        currentIndex++;
+        renderStack();
+      }, 300);
+    }
+
+    function handleSwipeUp(card) {
+      card.style.transform = "translate3d(0, 0, 0)";
+      const currentIdea = currentDeck[currentIndex];
+      openDeepModal(currentIdea.id);
+    }
+
+    /* Button Fallbacks */
+    document.getElementById("btn-pass").onclick = () => {
+      const topCard = deckContainer.querySelector(".idea-card");
+      if (topCard && currentIndex < currentDeck.length) handleSwipeLeft(topCard);
+    };
+
+    document.getElementById("btn-save").onclick = () => {
+      const topCard = deckContainer.querySelector(".idea-card");
+      if (topCard && currentIndex < currentDeck.length) handleSwipeRight(topCard);
+    };
+
+    document.getElementById("btn-explore").onclick = () => {
+      if (currentIndex < currentDeck.length) {
+        openDeepModal(currentDeck[currentIndex].id);
+      }
+    };
+
+    /* Keyboard Controls */
+    window.addEventListener("keydown", (e) => {
+      if (deepModalBackdrop.classList.contains("active") || 
+          savedOverlay.classList.contains("active") || 
+          aboutOverlay.classList.contains("active")) {
+        if (e.key === "Escape") closeAllModals();
+        return;
+      }
+
+      const topCard = deckContainer.querySelector(".idea-card");
+      if (!topCard || currentIndex >= currentDeck.length) return;
+
+      if (e.key === "ArrowLeft") handleSwipeLeft(topCard);
+      if (e.key === "ArrowRight") handleSwipeRight(topCard);
+      if (e.key === "ArrowUp") handleSwipeUp(topCard);
+    });
+
+    /* ==================================================
+       DEEP EXPLORATION MODAL ENGINE
+       ================================================== */
+    function openDeepModal(ideaId) {
+      const idea = IDEAS_DATABASE.find(i => i.id === ideaId);
+      if (!idea) return;
+
+      document.getElementById("modal-cat").textContent = idea.category;
+      document.getElementById("modal-title").textContent = idea.title;
+      document.getElementById("modal-explanation").textContent = idea.explanation;
+      document.getElementById("modal-ai-role").textContent = idea.aiRole;
+      document.getElementById("modal-path").textContent = idea.path;
+      document.getElementById("modal-who").textContent = `Primary Beneficiaries: ${idea.whoBenefits}`;
+      document.getElementById("modal-obstacle").textContent = idea.obstacle;
+      document.getElementById("modal-why").textContent = `"${idea.whyMatters}"`;
+
+      // Reality check points
+      const realityList = document.getElementById("modal-reality-list");
+      realityList.innerHTML = "";
+      idea.realityCheck.forEach(pt => {
+        const li = document.createElement("li");
+        li.className = "reality-check-item";
+        li.innerHTML = `
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <span>${pt}</span>
+        `;
+        realityList.appendChild(li);
+      });
+
+      // Impact matrix
+      document.getElementById("matrix-reach").textContent = idea.reach;
+      document.getElementById("matrix-time").textContent = idea.timeHorizon;
+      document.getElementById("matrix-leverage").textContent = idea.aiLeverage;
+      document.getElementById("matrix-feasibility").textContent = idea.feasibility;
+      document.getElementById("matrix-resources").textContent = idea.resourceRequirement;
+
+      deepModalBackdrop.classList.add("active");
+    }
+
+    function closeAllModals() {
+      deepModalBackdrop.classList.remove("active");
+      savedOverlay.classList.remove("active");
+      aboutOverlay.classList.remove("active");
+    }
+
+    modalCloseBtn.onclick = () => deepModalBackdrop.classList.remove("active");
+    deepModalBackdrop.onclick = (e) => {
+      if (e.target === deepModalBackdrop) deepModalBackdrop.classList.remove("active");
+    };
+
+    /* ==================================================
+       SAVED IDEAS & LOCAL STORAGE
+       ================================================== */
+    function saveIdea(idea) {
+      if (!savedIdeas.some(i => i.id === idea.id)) {
+        savedIdeas.push(idea);
+        localStorage.setItem("flourishing_saved_ideas", JSON.stringify(savedIdeas));
+        updateSavedBadge();
+        showToast(`Saved "${idea.title}"`);
+      } else {
+        showToast("Idea already in Saved list");
+      }
+    }
+
+    function removeSavedIdea(ideaId) {
+      savedIdeas = savedIdeas.filter(i => i.id !== ideaId);
+      localStorage.setItem("flourishing_saved_ideas", JSON.stringify(savedIdeas));
+      updateSavedBadge();
+      renderSavedGrid();
+      showToast("Idea removed from Saved");
+    }
+
+    function updateSavedBadge() {
+      savedBadge.textContent = savedIdeas.length;
+    }
+
+    function renderSavedGrid() {
+      savedGrid.innerHTML = "";
+      if (savedIdeas.length === 0) {
+        savedGrid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg class="empty-state-icon" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+            <p>You haven't saved any ideas yet.</p>
+            <p style="font-size:12px; margin-top:4px;">Swipe right on any card to store it here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      savedIdeas.forEach(idea => {
+        const card = document.createElement("div");
+        card.className = "saved-card-item";
+        card.innerHTML = `
+          <div class="saved-card-header">
+            <span class="card-category-badge">${idea.category}</span>
+            <span class="card-num">#${idea.number}</span>
+          </div>
+          <h3 class="saved-card-title">${idea.title}</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.4;">${idea.concept}</p>
+          <div class="saved-actions" style="margin-top:12px;">
+            <button class="saved-btn-sm" onclick="openDeepModal('${idea.id}')">Explore</button>
+            <button class="saved-btn-sm delete" onclick="removeSavedIdea('${idea.id}')">Remove</button>
+          </div>
+        `;
+        savedGrid.appendChild(card);
+      });
+    }
+
+    navSavedBtn.onclick = () => {
+      renderSavedGrid();
+      savedOverlay.classList.add("active");
+    };
+    closeSavedBtn.onclick = () => savedOverlay.classList.remove("active");
+
+    clearSavedBtn.onclick = () => {
+      if (savedIdeas.length === 0) return;
+      if (confirm("Clear all saved ideas from this session?")) {
+        savedIdeas = [];
+        localStorage.removeItem("flourishing_saved_ideas");
+        updateSavedBadge();
+        renderSavedGrid();
+        showToast("All saved ideas cleared");
+      }
+    };
+
+    /* ==================================================
+       ABOUT OVERLAY & FIRST LAUNCH
+       ================================================== */
+    navAboutBtn.onclick = () => aboutOverlay.classList.add("active");
+    closeAboutBtn.onclick = () => aboutOverlay.classList.remove("active");
+
+    document.getElementById("brand-logo").onclick = () => {
+      applyFilter("ALL");
+    };
+
+    startBtn.onclick = () => {
+      introOverlay.classList.add("hidden");
+      localStorage.setItem("flourishing_intro_seen", "true");
+    };
+
+    // Auto-hide intro if previously visited
+    if (localStorage.getItem("flourishing_intro_seen") === "true") {
+      introOverlay.classList.add("hidden");
+    }
+
+    /* Utility Toast */
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("active");
+      setTimeout(() => toast.classList.remove("active"), 2200);
+    }
+
+    /* Application Initial Execution */
+    initFilters();
+    updateDesktopSidePanel();
+    renderStack();
+
+  </script>
+</body>
+</html>
