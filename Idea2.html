@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#07080a">
+<title>Human Flourishing — An AI Idea Deck</title>
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --bg:#07080a;
+  --bg-2:#0b0d10;
+  --ink:#f4f2ee;
+  --dim:rgba(244,242,238,.58);
+  --dim2:rgba(244,242,238,.34);
+  --line:rgba(255,255,255,.085);
+  --line-2:rgba(255,255,255,.14);
+  --accent:#e0ab5a;
+  --good:#82c9a0;
+  --bad:#e0907f;
+  --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ease: cubic-bezier(.2,.9,.3,1);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(70% 45% at 50% -8%, rgba(224,171,90,.10), transparent 62%),
+    radial-gradient(60% 40% at 100% 100%, rgba(110,160,190,.07), transparent 60%),
+    radial-gradient(50% 40% at 0% 80%, rgba(140,120,190,.05), transparent 60%);
+}
+button{font-family:inherit; color:inherit;}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:8px;}
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+.app{
+  position:relative; z-index:1;
+  display:flex; justify-content:center; gap:56px;
+  height:100dvh; width:100%;
+  padding:0 16px;
+}
+.shell{
+  width:100%; max-width:520px;
+  display:flex; flex-direction:column;
+  height:100dvh; min-height:0;
+}
+.rail{display:none;}
+
+@media (min-width:1120px){
+  .rail{
+    display:flex; flex-direction:column;
+    width:212px; flex:0 0 212px;
+    padding:44px 0 32px;
+    gap:22px;
+  }
+  .rail-r{align-items:flex-start; padding-top:56px;}
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  padding:22px 4px 14px;
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+}
+.mark{
+  font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink); font-weight:600;
+}
+.mark span{color:var(--dim2); font-weight:500;}
+.mark-sub{font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim2);}
+@media (min-width:1120px){ .topbar{display:none;} }
+
+.rail-mark{font-size:12px; letter-spacing:.26em; text-transform:uppercase; font-weight:600; line-height:1.9;}
+.rail-mark em{display:block; font-style:normal; color:var(--dim2); letter-spacing:.2em; font-size:10.5px; margin-top:6px;}
+.rail-title{font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim2); margin:8px 0 0;}
+.rail-list{display:flex; flex-direction:column; gap:2px; margin-top:2px;}
+.rail-list button{
+  background:none; border:none; text-align:left; cursor:pointer;
+  padding:7px 10px; border-radius:9px; font-size:13.5px; color:var(--dim);
+  transition:background .2s, color .2s; letter-spacing:.01em;
+}
+.rail-list button:hover{color:var(--ink); background:rgba(255,255,255,.045);}
+.rail-list button.on{color:var(--ink); background:rgba(255,255,255,.07);}
+.rail-list button.on::before{content:"— "; color:var(--accent);}
+.stat{font-size:12px; color:var(--dim2); letter-spacing:.04em; line-height:2.1;}
+.stat b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums;}
+.hints{font-size:11.5px; color:var(--dim2); line-height:2; letter-spacing:.02em;}
+.hints kbd{
+  font-family:var(--sans); font-size:10.5px; padding:2px 6px; border-radius:5px;
+  border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--dim);
+}
+
+/* ---------- chips ---------- */
+.chips{
+  display:flex; gap:8px; overflow-x:auto; padding:2px 4px 14px;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex:0 0 auto; padding:7px 14px; border-radius:999px;
+  border:1px solid var(--line); background:rgba(255,255,255,.028);
+  color:var(--dim); font-size:12.5px; letter-spacing:.05em; cursor:pointer;
+  transition:background .25s var(--ease), color .25s, border-color .25s, transform .25s;
+  white-space:nowrap;
+}
+.chip:hover{color:var(--ink); border-color:var(--line-2);}
+.chip.on{color:#0a0a0a; background:var(--ink); border-color:var(--ink); font-weight:600;}
+.chip:active{transform:scale(.96);}
+
+/* ---------- screens ---------- */
+main{flex:1; min-height:0; display:flex; position:relative;}
+.screen{display:none; flex-direction:column; flex:1; min-height:0; width:100%;}
+.screen.on{display:flex;}
+.scroller{overflow-y:auto; overscroll-behavior:contain; padding:0 4px 24px; -webkit-overflow-scrolling:touch;}
+
+/* ---------- card stack ---------- */
+.stack{
+  flex:1; min-height:0;
+  display:grid; grid-template-columns:1fr; grid-template-rows:1fr;
+  justify-items:center;
+  padding:0 4px;
+  position:relative;
+}
+.card{
+  grid-area:1/1;
+  width:100%; max-width:452px; height:100%; max-height:620px;
+  border-radius:26px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#13161a 0%, #0b0d10 100%);
+  box-shadow:0 40px 80px -40px rgba(0,0,0,.95), 0 2px 0 0 rgba(255,255,255,.03) inset;
+  padding:24px 24px 20px;
+  display:flex; flex-direction:column;
+  position:relative; overflow:hidden;
+  will-change:transform;
+  touch-action:none;
+  user-select:none; -webkit-user-select:none;
+  transition:transform .45s var(--ease), opacity .45s var(--ease);
+}
+.card-glow{
+  position:absolute; left:-20%; right:-20%; top:-45%; height:78%;
+  background:radial-gradient(closest-side, var(--accent), transparent 72%);
+  opacity:.15; filter:blur(6px); pointer-events:none;
+}
+.card.back{
+  transform:translateY(-16px) scale(.945);
+  opacity:.42;
+  pointer-events:none;
+  filter:saturate(.7);
+}
+.card.top{transform:none; opacity:1;}
+.card.dragging{transition:none;}
+
+.card-top{display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:2;}
+.num{font-size:11px; letter-spacing:.18em; color:var(--dim2); font-variant-numeric:tabular-nums;}
+.cat{
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+  color:var(--accent);
+  border:1px solid var(--line); border-radius:999px; padding:5px 11px;
+  background:rgba(255,255,255,.03);
+}
+.card-title{
+  font-family:var(--serif); font-weight:500;
+  font-size:clamp(23px,6.4vw,31px); line-height:1.1; letter-spacing:-.018em;
+  margin:16px 0 0; position:relative; z-index:2;
+  text-wrap:balance;
+}
+.card-concept{
+  font-size:14.8px; line-height:1.52; color:var(--dim);
+  margin:13px 0 0; position:relative; z-index:2;
+  display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden;
+}
+.card-spacer{flex:1; min-height:12px;}
+.card-meta{
+  display:grid; grid-template-columns:1fr 1fr; gap:13px 12px;
+  border-top:1px solid var(--line); padding-top:15px;
+  position:relative; z-index:2;
+}
+.lbl{display:block; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim2); margin-bottom:3px;}
+.val{font-size:13.5px; color:var(--ink); letter-spacing:.005em;}
+.card-hint{
+  margin-top:15px; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--dim2); position:relative; z-index:2;
+}
+
+/* swipe overlays */
+.ov{
+  position:absolute; z-index:5; pointer-events:none;
+  font-size:11px; letter-spacing:.22em; font-weight:700; text-transform:uppercase;
+  padding:8px 14px; border-radius:999px; opacity:0;
+  transition:opacity .1s linear;
+}
+.ov-keep{top:24px; left:22px; background:var(--good); color:#07110b; transform:rotate(-7deg);}
+.ov-pass{top:24px; right:22px; background:var(--bad); color:#150806; transform:rotate(7deg);}
+.ov-up{left:50%; bottom:74px; transform:translateX(-50%); background:var(--accent); color:#151005;}
+.ov-down{left:50%; top:22px; transform:translateX(-50%); background:rgba(255,255,255,.12); color:var(--dim); border:1px solid var(--line-2);}
+
+/* card entry */
+@keyframes cardIn{
+  from{transform:translateY(-46px) scale(.95); opacity:0;}
+  to{transform:translateY(0) scale(1); opacity:1;}
+}
+.card.enter{animation:cardIn .44s var(--ease);}
+
+/* ---------- action bar ---------- */
+.actions{
+  display:flex; gap:8px; padding:16px 4px 4px;
+}
+.actions button{
+  flex:1; height:48px; border-radius:15px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.035);
+  color:var(--dim); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .22s var(--ease), color .22s, border-color .22s, transform .18s var(--ease);
+}
+.actions button:hover{color:var(--ink); background:rgba(255,255,255,.07); border-color:var(--line-2);}
+.actions button:active{transform:scale(.97);}
+.actions button[data-act="explore"]{color:var(--ink); background:rgba(255,255,255,.06); flex:1.25;}
+.actions button[data-act="save"]{color:#0f1a13; background:var(--good); border-color:transparent; font-weight:600;}
+.actions button[data-act="save"]:hover{background:#8fd7ac; color:#0f1a13;}
+
+/* ---------- dock ---------- */
+.dock{
+  display:flex; justify-content:center; gap:4px;
+  padding:8px 0 calc(12px + env(safe-area-inset-bottom));
+}
+.dock button{
+  flex:1; max-width:130px; padding:11px 4px; border-radius:13px;
+  background:transparent; border:none; cursor:pointer;
+  color:var(--dim2); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  transition:color .22s, background .22s;
+}
+.dock button:hover{color:var(--dim);}
+.dock button.on{color:var(--ink); background:rgba(255,255,255,.055);}
+
+/* ---------- end state ---------- */
+.endcard{
+  grid-area:1/1; width:100%; max-width:452px; height:100%; max-height:620px;
+  border-radius:26px; border:1px solid var(--line);
+  background:linear-gradient(180deg,#101317,#0a0c0e);
+  padding:36px 28px; display:flex; flex-direction:column; justify-content:center;
+  text-align:left;
+}
+.endcard h2{font-family:var(--serif); font-weight:500; font-size:24px; line-height:1.2; margin:12px 0 10px; letter-spacing:-.01em;}
+.endcard p{font-size:14px; color:var(--dim); line-height:1.55; margin:0;}
+.end-actions{display:flex; flex-direction:column; gap:9px; margin-top:26px;}
+.end-actions button{
+  padding:14px 16px; border-radius:14px; cursor:pointer; text-align:left;
+  border:1px solid var(--line); background:rgba(255,255,255,.035);
+  color:var(--ink); font-size:13.5px; letter-spacing:.02em;
+  transition:background .2s, border-color .2s;
+}
+.end-actions button:hover{background:rgba(255,255,255,.075); border-color:var(--line-2);}
+
+/* ---------- modes / categories / saved / about ---------- */
+.page-title{font-family:var(--serif); font-weight:500; font-size:29px; letter-spacing:-.02em; margin:8px 0 6px;}
+.page-lede{font-size:14px; color:var(--dim); line-height:1.6; margin:0 0 26px; max-width:46ch;}
+.sec-label{
+  font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim2);
+  margin:26px 0 12px;
+}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+.tile{
+  text-align:left; padding:15px 15px 14px; border-radius:16px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.028);
+  transition:background .22s var(--ease), border-color .22s, transform .18s var(--ease);
+  display:flex; flex-direction:column; gap:5px; min-height:78px;
+}
+.tile:hover{background:rgba(255,255,255,.07); border-color:var(--line-2);}
+.tile:active{transform:scale(.98);}
+.tile.on{border-color:var(--accent); background:rgba(224,171,90,.08);}
+.tile .t-name{font-size:14px; color:var(--ink); letter-spacing:.01em;}
+.tile .t-count{font-size:11px; color:var(--dim2); letter-spacing:.1em; text-transform:uppercase;}
+
+.saved-item{
+  border:1px solid var(--line); border-radius:18px; padding:17px 17px 14px;
+  background:rgba(255,255,255,.026); margin-bottom:10px;
+}
+.saved-item .s-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px;}
+.saved-item h3{font-family:var(--serif); font-weight:500; font-size:18px; margin:0 0 7px; letter-spacing:-.01em; line-height:1.22;}
+.saved-item p{font-size:13px; color:var(--dim); margin:0; line-height:1.5;}
+.s-actions{display:flex; gap:8px; margin-top:14px;}
+.s-actions button{
+  padding:9px 15px; border-radius:11px; cursor:pointer; font-size:11.5px;
+  letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid var(--line); background:transparent; color:var(--dim);
+  transition:background .2s, color .2s;
+}
+.s-actions button:hover{background:rgba(255,255,255,.07); color:var(--ink);}
+
+.empty{
+  border:1px dashed var(--line-2); border-radius:20px; padding:44px 26px;
+  text-align:center; color:var(--dim2); font-size:13.5px; line-height:1.7;
+}
+.empty strong{display:block; font-family:var(--serif); font-weight:500; font-size:19px; color:var(--dim); margin-bottom:8px; letter-spacing:-.01em;}
+
+.prose p{font-size:14.6px; line-height:1.72; color:var(--dim); margin:0 0 17px; max-width:60ch;}
+.prose p strong{color:var(--ink); font-weight:600;}
+.prose h3{
+  font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim2);
+  margin:30px 0 12px; font-weight:600;
+}
+.prose .callout{
+  border-left:2px solid var(--accent); padding:2px 0 2px 18px; margin:26px 0;
+  font-family:var(--serif); font-size:17.5px; line-height:1.5; color:var(--ink);
+  letter-spacing:-.01em;
+}
+
+/* ============================================================
+   SHEET
+   ============================================================ */
+.scrim{
+  position:fixed; inset:0; z-index:55;
+  background:rgba(4,5,6,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  opacity:0; pointer-events:none; transition:opacity .34s var(--ease);
+}
+.scrim.open{opacity:1; pointer-events:auto;}
+.sheet{
+  position:fixed; left:50%; bottom:0; z-index:60;
+  width:min(100%, 660px); max-height:92dvh;
+  transform:translate(-50%, 102%);
+  background:linear-gradient(180deg,#12151a 0%, #0a0c0e 100%);
+  border:1px solid var(--line); border-bottom:none;
+  border-radius:26px 26px 0 0;
+  display:flex; flex-direction:column;
+  transition:transform .42s var(--ease);
+  box-shadow:0 -40px 90px -40px rgba(0,0,0,.9);
+}
+.sheet.open{transform:translate(-50%, 0);}
+.sheet-close{
+  position:absolute; top:16px; right:16px; z-index:3;
+  width:34px; height:34px; border-radius:50%; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.05);
+  color:var(--dim); font-size:17px; line-height:1;
+  display:grid; place-items:center;
+  transition:background .2s, color .2s;
+}
+.sheet-close:hover{background:rgba(255,255,255,.1); color:var(--ink);}
+.sheet-scroll{overflow-y:auto; overscroll-behavior:contain; padding:28px 26px 8px; -webkit-overflow-scrolling:touch;}
+.sheet-meta{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+.sheet-scroll h2{
+  font-family:var(--serif); font-weight:500; font-size:clamp(24px,6vw,32px);
+  line-height:1.12; letter-spacing:-.02em; margin:0 0 14px; padding-right:38px;
+  text-wrap:balance;
+}
+.sheet-concept{font-size:16px; line-height:1.55; color:var(--ink); opacity:.86; margin:0 0 6px; max-width:56ch;}
+.sheet-scroll section{margin-top:26px;}
+.sheet-scroll h3{
+  font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim2);
+  margin:0 0 9px; font-weight:600;
+}
+.sheet-scroll section p{font-size:14.6px; line-height:1.7; color:var(--dim); margin:0; max-width:60ch;}
+.reality ul{margin:0; padding:0; list-style:none;}
+.reality li{
+  position:relative; padding-left:20px; margin-bottom:11px;
+  font-size:14.2px; line-height:1.62; color:var(--dim); max-width:60ch;
+}
+.reality li::before{
+  content:""; position:absolute; left:0; top:8px; width:6px; height:6px;
+  border-radius:50%; background:var(--bad); opacity:.75;
+}
+.impact-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; margin-top:4px;}
+.impact-grid > div{border-top:1px solid var(--line); padding-top:11px;}
+.sheet-actions{
+  display:flex; gap:9px; padding:16px 26px calc(20px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(10,12,14,.4), rgba(10,12,14,.96));
+}
+.sheet-actions button{
+  flex:1; height:50px; border-radius:14px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.04);
+  color:var(--dim); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s, color .2s;
+}
+.sheet-actions button:hover{color:var(--ink); background:rgba(255,255,255,.08);}
+.sheet-actions button.primary{background:var(--good); color:#0f1a13; border-color:transparent; font-weight:600;}
+.sheet-actions button.primary:hover{background:#8fd7ac; color:#0f1a13;}
+.sheet-actions button.primary.saved{background:rgba(255,255,255,.08); color:var(--dim); border-color:var(--line); font-weight:500;}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast{
+  position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom));
+  transform:translate(-50%, 14px); z-index:80;
+  padding:10px 20px; border-radius:999px;
+  background:rgba(20,23,27,.94); border:1px solid var(--line-2);
+  color:var(--ink); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  white-space:nowrap;
+}
+#toast.on{opacity:1; transform:translate(-50%, 0);}
+
+/* ============================================================
+   INTRO
+   ============================================================ */
+.intro{
+  position:fixed; inset:0; z-index:100;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:32px 28px;
+  transition:opacity .8s var(--ease), visibility .8s;
+}
+.intro.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.intro-inner{max-width:600px; width:100%; text-align:center;}
+.intro-a{
+  font-family:var(--serif); font-weight:500;
+  font-size:clamp(30px, 8.4vw, 58px); line-height:1.1; letter-spacing:-.028em;
+  margin:0; text-wrap:balance;
+  opacity:0; animation:fadeUp 1.1s var(--ease) .25s forwards;
+}
+.intro-b{
+  margin:34px 0 0; font-size:clamp(12px,3vw,14px);
+  letter-spacing:.28em; text-transform:uppercase; color:var(--dim);
+  opacity:0; transition:opacity .9s var(--ease) .2s, transform .9s var(--ease) .2s;
+  transform:translateY(8px);
+}
+.intro-b.in{opacity:1; transform:none;}
+.intro-btn{
+  margin-top:44px; padding:16px 34px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line-2); background:transparent; color:var(--ink);
+  font-size:11.5px; letter-spacing:.24em; text-transform:uppercase;
+  opacity:0; transition:opacity .9s var(--ease) .45s, background .25s;
+}
+.intro-btn.in{opacity:1;}
+.intro-btn:hover{background:rgba(255,255,255,.07);}
+.intro-skip{
+  position:absolute; bottom:calc(26px + env(safe-area-inset-bottom));
+  font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim2);
+  opacity:0; animation:fadeUp 1s ease 1.6s forwards;
+}
+@keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+
+/* ============================================================
+   MOTION PREFERENCES / SMALL SCREENS
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-delay:0ms !important;
+    transition-duration:.001ms !important;}
+}
+@media (max-height:680px){
+  .card{padding:20px 20px 16px; border-radius:22px;}
+  .card-title{font-size:clamp(21px,5.6vw,26px); margin-top:12px;}
+  .card-concept{font-size:14px; -webkit-line-clamp:4;}
+  .card-hint{margin-top:11px;}
+  .actions button{height:44px;}
+}
+@media (max-width:360px){
+  .card{padding:18px 17px 15px;}
+  .card-concept{-webkit-line-clamp:4; font-size:13.6px;}
+  .val{font-size:12.6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ INTRO ============================ -->
+<div class="intro" id="intro">
+  <div class="intro-inner">
+    <h1 class="intro-a">What if AI could make the basics abundant?</h1>
+    <p class="intro-b" id="introB">Food. Shelter. Energy. Knowledge. Opportunity.</p>
+    <button class="intro-btn" id="introBtn">Enter the deck</button>
+  </div>
+  <div class="intro-skip">Tap anywhere to skip</div>
+</div>
+
+<!-- ============================ APP ============================ -->
+<div class="app">
+
+  <!-- LEFT RAIL -->
+  <aside class="rail rail-l" aria-hidden="false">
+    <div>
+      <div class="rail-mark">Human<br>Flourishing<em>AI Idea Deck</em></div>
+    </div>
+    <div>
+      <p class="rail-title">Modes</p>
+      <div class="rail-list" id="railModes"></div>
+    </div>
+  </aside>
+
+  <!-- SHELL -->
+  <div class="shell">
+    <header class="topbar">
+      <div class="mark">Human <span>Flourishing</span></div>
+      <div class="mark-sub">Idea Deck</div>
+    </header>
+
+    <main>
+      <!-- DISCOVER -->
+      <section class="screen on" id="s-discover" aria-label="Discover ideas">
+        <div class="chips" id="chips" role="tablist" aria-label="Discovery modes"></div>
+        <div class="stack" id="stack"></div>
+        <div class="actions">
+          <button data-act="pass" aria-label="Pass on this idea">Pass</button>
+          <button data-act="explore" aria-label="Explore this idea in detail">Explore</button>
+          <button data-act="save" aria-label="Keep this idea">Keep</button>
+        </div>
+      </section>
+
+      <!-- MODES -->
+      <section class="screen" id="s-modes" aria-label="Discovery modes and domains">
+        <div class="scroller">
+          <h1 class="page-title">Discovery modes</h1>
+          <p class="page-lede">Different ways into the same question. Every idea carries a reality check — read those before believing any of it.</p>
+          <div class="grid2" id="modeGrid"></div>
+          <p class="sec-label">Domains</p>
+          <div class="grid2" id="catGrid"></div>
+        </div>
+      </section>
+
+      <!-- SAVED -->
+      <section class="screen" id="s-saved" aria-label="Kept ideas">
+        <div class="scroller">
+          <h1 class="page-title">Kept ideas</h1>
+          <p class="page-lede" id="savedLede">Ideas you swiped right on. Stored in this browser only.</p>
+          <div id="savedList"></div>
+          <div id="savedFooter"></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="screen" id="s-about" aria-label="About this project">
+        <div class="scroller prose">
+          <h1 class="page-title">About</h1>
+          <p class="page-lede">An exploration, not a prediction.</p>
+
+          <p class="callout">If AI dramatically increases humanity's productive capability, how could we use that capability so that every person can reach the basics of life — and have more freedom to pursue a life they actually value?</p>
+
+          <p>This is an idea deck. It presents possible mechanisms: systems, technologies, policies, businesses, infrastructure concepts, and experiments that <strong>could</strong> contribute to that goal. It does not claim that AI will solve poverty, end scarcity, or produce universal prosperity. Nothing here is inevitable.</p>
+
+          <h3>Technology does not determine outcomes</h3>
+          <p>What actually happens depends on economics, infrastructure, institutions, politics, culture, human behaviour, physical resources, and governance. A perfectly good technical idea can fail completely for reasons that have nothing to do with technology — and a mediocre one can succeed because the politics aligned.</p>
+
+          <h3>Why every idea has a reality check</h3>
+          <p>Optimism is cheap and mostly useless. Each idea here lists what could go wrong, who could be harmed, what resources are required, and what assumptions must hold. An idea that cannot survive scrutiny is not worth the attention, however beautiful it sounds.</p>
+
+          <h3>On AI controlling important things</h3>
+          <p>Several ideas put AI in a coordination role over food, water, energy, housing or public money. Those ideas deserve extra suspicion, not less. Concentrated control of essential systems — by a company, a state, or an algorithm — is a risk that can outweigh the efficiency it buys. Where that risk appears, it is named.</p>
+
+          <h3>How to use this</h3>
+          <p>Swipe right to keep an idea, left to pass, up to read it properly, down to go back. Everything is stored locally in your browser; nothing is sent anywhere. The deck works offline.</p>
+
+          <h3>What this is not</h3>
+          <p>Not a social network. Not a campaign. Not a fundraising platform. Not a chatbot. Not a prediction engine. Not a claim that abundance is coming. It is a way to hold more possibilities in your head at once than you had before you opened it.</p>
+
+          <h3>The question underneath everything</h3>
+          <p>How could we use artificial intelligence to reduce the amount of human effort and economic scarcity required to secure the basic necessities of life — while increasing people's freedom to pursue lives they actually value? There is no single answer here. There are only better and worse experiments.</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="dock" aria-label="Primary">
+      <button data-nav="discover" class="on">Discover</button>
+      <button data-nav="modes">Modes</button>
+      <button data-nav="saved">Saved</button>
+      <button data-nav="about">About</button>
+    </nav>
+  </div>
+
+  <!-- RIGHT RAIL -->
+  <aside class="rail rail-r" aria-hidden="true">
+    <div class="stat">
+      <div>Idea <b id="stat-pos">1</b> of <b id="stat-total">45</b></div>
+      <div>Kept <b id="stat-saved">0</b></div>
+      <div>Mode <b id="stat-mode">For You</b></div>
+    </div>
+    <div class="hints">
+      <kbd>←</kbd> pass<br>
+      <kbd>→</kbd> keep<br>
+      <kbd>↑</kbd> explore<br>
+      <kbd>↓</kbd> back<br>
+      <kbd>Esc</kbd> close
+    </div>
+  </aside>
+</div>
+
+<!-- ============================ SHEET ============================ -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. IDEA LIBRARY
+   ============================================================ */
+const IDEAS = [
+/* ---------------- FOOD ---------------- */
+{
+  cat:"Food",
+  title:"Irrigation That Knows the Soil",
+  concept:"A sensor-and-satellite network that waters each field only when the soil actually needs it, cutting agricultural water use without cutting yield.",
+  body:"Soil probes, cheap satellite imagery and local weather models feed a single model per farm. Instead of irrigating on a calendar, pumps run on a demand signal — per plot, per day. The same signal can be shared across a whole basin, so water goes where it produces the most food per litre.",
+  ai:"AI fuses sparse ground sensors with satellite thermal imagery to estimate soil moisture everywhere, then schedules pumps and valves. It learns each field's response to water across seasons.",
+  who:"Smallholder farmers, water-stressed regions, and the downstream cities that share the same river.",
+  path:"Start with one irrigation district and a co-op. Give farmers a phone-visible schedule, measure yield and water saved across two seasons, publish the results.",
+  obstacle:"Sensor maintenance, pump retrofits, and water rights — the technology is easier than the politics of who owns the savings.",
+  reality:[
+    "Savings may be captured by the largest farms unless allocation rules are set before deployment.",
+    "Sensor networks fail; a model that trusts bad data can waste an entire season.",
+    "Rebound effect: cheaper water can encourage expansion of irrigated area, erasing the gain."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Agriculture consumes roughly 70% of freshwater withdrawals. Even modest efficiency gains free water for drinking, ecosystems and cities.",
+  tags:["food","water","abundance","startnow","community"]
+},
+{
+  cat:"Food",
+  title:"The Surplus Switchboard",
+  concept:"A real-time market that routes food that would be thrown away to the people who need it, within hours rather than days.",
+  body:"Growers, wholesalers, supermarkets and restaurants publish surplus as it appears. The system matches it to food banks, community kitchens and discount outlets, then books the transport. Everything is timed, so nothing sits in a warehouse waiting for a volunteer to become free.",
+  ai:"Forecasting predicts surplus before it exists. Matching and routing algorithms assemble scattered pickups into efficient runs. Vision models grade quality so recipients know what they are getting.",
+  who:"Low-income households, food banks, and farmers who currently pay to dispose of unsold crops.",
+  path:"Pilot in one city with a handful of retailers and existing food charities. Measure tonnes diverted per dollar of logistics.",
+  obstacle:"Liability rules and cold-chain gaps — donated food still has to be safe food.",
+  reality:[
+    "Food rescue does not reduce hunger on its own; it is a logistics patch, not an income.",
+    "Charities become dependent on unpredictable corporate surplus and lose the ability to plan.",
+    "Transport emissions can outweigh the value of the food if routes are poorly designed."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Helpful", resource:"Low",
+  why:"Roughly a third of food produced is never eaten while hundreds of millions go hungry. The gap is coordination, not total supply.",
+  tags:["food","abundance","startnow","community"]
+},
+{
+  cat:"Food",
+  title:"Robots as a Service for Small Farms",
+  concept:"Smallholders rent autonomous weeding, seeding and harvesting machines by the hectare instead of buying them.",
+  body:"A regional depot owns a fleet of light agricultural robots. Farmers book them the way they would book a taxi; the fleet moves between fields and works at night. Ownership stays with the depot, so the capital cost is spread across hundreds of small plots instead of one.",
+  ai:"Perception models let cheap machines tell crops from weeds and handle irregular field shapes. Fleet scheduling maximises machine utilisation, which is what actually determines the rental price.",
+  who:"Smallholder farmers who cannot justify a combine harvester, or even a mid-sized tractor.",
+  path:"One depot, one crop type, one district. Prove the utilisation economics before adding a second crop.",
+  obstacle:"Utilisation. Robots are only cheap when they are busy, and small farms are scattered and seasonal.",
+  reality:[
+    "Seasonal demand means idle machines for much of the year, which pushes rental prices up.",
+    "Repair and spare-part networks, not software, are the real bottleneck in rural areas.",
+    "Labour displacement for hired farm workers can be immediate, local and unplanned for."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Fundamental", resource:"High",
+  why:"Most of the world's farms are small, and most were excluded from the productivity gains that large farms captured through mechanisation.",
+  tags:["food","robotics","abundance","community","startnow"]
+},
+{
+  cat:"Food",
+  title:"Protein Without Land",
+  concept:"Precision fermentation and AI-controlled bioreactors produce cheap, familiar proteins using a fraction of the land and water of livestock.",
+  body:"Microbes programmed to produce dairy, egg or meat proteins grow in tanks. The output is a neutral protein ingredient that food manufacturers already know how to use. AI runs the bioreactors at the edge of their optimal window, where small deviations destroy an entire batch.",
+  ai:"Process control models hold temperature, pH and feed rates inside narrow bands. Design models search for cheaper growth media and higher-yielding strains.",
+  who:"Everyone who buys protein — and the land, water and atmosphere currently used to produce it.",
+  path:"Fermentation plants already make enzymes and insulin this way. The path is regulatory approval plus scale, not new physics.",
+  obstacle:"Cost parity, public acceptance, and the political power of incumbent agricultural interests.",
+  reality:[
+    "Energy demand is significant; cheap protein is not automatically low-carbon protein.",
+    "Concentration risk: a handful of companies could end up controlling the global protein supply.",
+    "Livelihoods built on livestock farming would be disrupted, and probably not gradually."
+  ],
+  horizon:"5–15 years", reach:"Global", feasibility:"Medium", leverage:"Important", resource:"High",
+  why:"Animal agriculture occupies roughly 77% of agricultural land. Decoupling protein from land is one of the largest available levers on both food cost and ecosystem pressure.",
+  tags:["food","abundance","big","global"]
+},
+{
+  cat:"Food",
+  title:"The Cold Chain Watchtower",
+  concept:"Sensors and forecasting that find where food is spoiling in transit, and reroute it before it is lost.",
+  body:"A large share of food loss happens between harvest and market — in trucks, warehouses and markets with unreliable refrigeration. Cheap temperature loggers plus models that predict remaining shelf life let operators reroute at-risk loads to closer markets before they turn.",
+  ai:"Shelf-life prediction from temperature history, routing that prioritises perishable loads, and anomaly detection on refrigeration equipment before it fails.",
+  who:"Farmers who lose income, consumers who pay for the loss, and everyone who eats.",
+  path:"One corridor between a farming region and a city market. Instrument the trucks and measure loss before and after.",
+  obstacle:"Cold chain hardware costs money, and the losses are borne by whoever is weakest in the chain — usually the farmer.",
+  reality:[
+    "Efficiency gains often accrue to distributors rather than to the farmers who bore the risk.",
+    "Refrigeration itself is energy-intensive and often uses high-impact refrigerants.",
+    "The data generated can be used to squeeze suppliers on price rather than to help them."
+  ],
+  horizon:"Now", reach:"Regional", feasibility:"High", leverage:"Helpful", resource:"Moderate",
+  why:"Food that is grown, harvested, transported and then thrown away is the purest form of waste in the entire economy.",
+  tags:["food","logistics","startnow"]
+},
+
+/* ---------------- SHELTER ---------------- */
+{
+  cat:"Shelter",
+  title:"The Housing Demand Compiler",
+  concept:"An AI-coordinated construction network that continuously matches local housing demand, land, materials, labour and modular designs — then builds where cost per home is lowest.",
+  body:"Instead of waiting for a developer to assemble land, capital and permits for one project, the network runs a standing model of an entire region: who needs housing, what land is available, what materials cost this month, which factories have spare capacity. It then issues build orders that fit the cheapest available combination.",
+  ai:"Optimisation across thousands of interacting variables, generative design that adapts standard modules to awkward sites, and cost forecasting that tells you when to buy steel.",
+  who:"People priced out of housing, municipalities with waiting lists, and small builders who gain access to a pipeline.",
+  path:"One city, one housing authority, one modular factory. Start with infill sites that are already zoned.",
+  obstacle:"Land ownership, zoning and financing. Construction is rarely limited by design intelligence.",
+  reality:[
+    "Optimising purely for cost produces monotonous, poorly-served neighbourhoods.",
+    "Without land reform or public land, the network still cannot build where people need it.",
+    "Automation could undercut the wages of construction workers with no transition plan."
+  ],
+  horizon:"5–15 years", reach:"National", feasibility:"Medium", leverage:"Important", resource:"High",
+  why:"Shelter is the single largest line item in most household budgets. Small reductions in construction cost compound into large gains in disposable income and stability.",
+  tags:["shelter","abundance","big","community"]
+},
+{
+  cat:"Shelter",
+  title:"Nothing Should Sit Empty",
+  concept:"A system that continuously matches empty buildings to people who need housing, and manages the conversion.",
+  body:"Offices, hotels, schools and shops sit vacant while people sleep outside. The system keeps a live register of empty structures, models conversion cost, and pairs them with financing, permits and tenants. It is a matchmaker and a project manager, not a landlord.",
+  ai:"Computer vision surveys buildings from street-level imagery. Models estimate conversion cost and code compliance. Scheduling coordinates trades across many small simultaneous projects.",
+  who:"Homeless populations, low-income renters, and owners of stranded commercial assets.",
+  path:"One city, one willing owner, one conversion. Publicise the real cost per unit against new-build.",
+  obstacle:"Building codes, plumbing, daylight and floor plates often make conversion genuinely expensive — not just bureaucratic.",
+  reality:[
+    "Conversion is not always cheaper than new build; sometimes it is considerably worse.",
+    "Concentrating poor households in converted commercial blocks can create new ghettos.",
+    "Owners may prefer vacancy as a tax strategy unless policy changes first."
+  ],
+  horizon:"1–5 years", reach:"Local", feasibility:"High", leverage:"Helpful", resource:"Moderate",
+  why:"In many cities, empty floor space exceeds the space needed to house everyone without shelter. The mismatch is economic and legal, not physical.",
+  tags:["shelter","abundance","startnow","community"]
+},
+{
+  cat:"Shelter",
+  title:"Permits in Days, Not Years",
+  concept:"AI pre-review of building plans against local code, so approvals take days and small builders can compete.",
+  body:"Most housing delay is not construction; it is review. A model reads a submitted plan, checks it against the actual code, flags conflicts with citations, and hands a reviewer a short list of real problems instead of a four-hundred-page file.",
+  ai:"Document understanding, code retrieval and rule checking — with an auditable trail for every flag so decisions can be challenged.",
+  who:"Small builders who cannot afford to wait, renters who pay for the delay, and cities drowning in backlogs.",
+  path:"Start in one municipality with a narrow building type — say, single-family additions — and expand from there.",
+  obstacle:"Liability and institutional resistance. Reviewers are also the people who would have to trust the tool.",
+  reality:[
+    "A model that misreads code creates legal exposure and dangerous buildings.",
+    "Faster permitting can accelerate speculation and displacement if not paired with housing policy.",
+    "Automation may reduce public-sector jobs that were themselves a form of stable employment."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Important", resource:"Low",
+  why:"Delay is a hidden tax on housing. Every month of review is a month of rent paid somewhere else.",
+  tags:["shelter","governance","startnow","abundance"]
+},
+{
+  cat:"Shelter",
+  title:"Buildings Designed for What's Nearby",
+  concept:"Generative design that produces safe, comfortable buildings from locally abundant materials — earth, bamboo, timber, recycled aggregate.",
+  body:"Most housing designs assume concrete and steel. A design engine takes an inventory of what a region actually has — soil composition, agricultural waste, local timber, reclaimed material — and generates structures that meet local safety codes using those inputs instead.",
+  ai:"Structural simulation and material property prediction let designers test thousands of combinations against wind, seismic and fire loads before anything is built.",
+  who:"Rural and peri-urban households far from cement supply chains, and regions with high transport costs.",
+  path:"Partner with an engineering school and one rural district. Build and instrument a handful of prototypes, then publish the performance data.",
+  obstacle:"Building codes, insurance and lending are all calibrated to conventional materials, and none of them move quickly.",
+  reality:[
+    "Unproven materials can fail in ways the models did not anticipate.",
+    "Local materials are often labour-intensive, which is good for jobs and bad for speed.",
+    "Without code acceptance, residents cannot get mortgages or insurance on the result."
+  ],
+  horizon:"5–15 years", reach:"Regional", feasibility:"Medium", leverage:"Important", resource:"Moderate",
+  why:"In much of the world, the cost of shelter is dominated by materials shipped long distances. Building from what is already underfoot is one of the oldest and most underused strategies.",
+  tags:["shelter","abundance","environment","community"]
+},
+{
+  cat:"Shelter",
+  title:"The Ownership Ledger",
+  concept:"Transparent rent-to-ownership and community land trust systems administered by software, so that paying rent builds equity instead of only enriching a landlord.",
+  body:"Community land trusts and limited-equity co-ops keep housing permanently affordable, but they are administratively heavy. Software that handles equity accrual, resale formulas, member records and compliance makes them practical at a much larger scale.",
+  ai:"Automated accounting and audit, document generation, anomaly detection for fraud, and modelling of long-term affordability under different rule sets.",
+  who:"Renters who currently build nothing, and cities trying to keep housing permanently affordable.",
+  path:"One land trust, one development, one resale. Prove that administration cost actually falls.",
+  obstacle:"Capital. Someone still has to buy the land, and land is where the cost lives.",
+  reality:[
+    "Limited-equity models restrict the wealth-building they promise in the first place.",
+    "Administration can quietly become surveillance of residents.",
+    "Without land acquisition funding it is a rounding error, not a housing policy."
+  ],
+  horizon:"1–5 years", reach:"Local", feasibility:"Medium", leverage:"Helpful", resource:"High",
+  why:"Housing is the largest expense for most households and the main way wealth is either built or never built at all.",
+  tags:["shelter","economics","community","abundance"]
+},
+{
+  cat:"Shelter",
+  title:"Machines That Build Their Own Habitat",
+  concept:"Autonomous construction systems that build shelters from locally available material — regolith, earth, waste — with almost no supply chain.",
+  body:"If structures could be built from what is already on site, the cost of shelter would decouple from global material markets. Experimental systems already print or assemble structures from local earth and waste. Scaling them requires better perception, binding chemistry, and robotic coordination.",
+  ai:"Material characterisation from sensor data, generative structural design, and multi-robot coordination on an unstructured site.",
+  who:"Remote communities, disaster zones, and eventually off-world settlements.",
+  path:"Start on Earth with disaster housing and remote construction, where the value is already obvious.",
+  obstacle:"Material science and structural certification. Novel materials struggle to get approved for human occupation.",
+  reality:[
+    "Unproven structures put people at risk if rushed into habitation.",
+    "Earth construction is labour-intensive and slow at small scale.",
+    "The off-world framing often distracts attention and funding from terrestrial applications."
+  ],
+  horizon:"15+ years", reach:"Regional", feasibility:"Low", leverage:"Fundamental", resource:"High",
+  why:"Shelter is expensive largely because of what has to be shipped to the site. Building from what is already there removes that cost entirely.",
+  tags:["shelter","robotics","moonshot","big"]
+},
+
+/* ---------------- ENERGY ---------------- */
+{
+  cat:"Energy",
+  title:"The Rooftop Triage",
+  concept:"AI identifies which roofs, in what order, can host solar at the lowest cost per kilowatt-hour — then aggregates the demand to make installation cheap.",
+  body:"The bottleneck in rooftop solar is not panels; it is finding customers, surveying roofs, and selling one installation at a time. A model screens whole neighbourhoods from aerial imagery, estimates yield and shading, and groups adjacent homes into a single installation contract.",
+  ai:"Imagery analysis, shading and yield modelling, plus route and crew scheduling that turns scattered roofs into dense work zones.",
+  who:"Households with high energy bills, installers who spend too much on sales, and grids that need distributed generation.",
+  path:"One neighbourhood, one installer, one financing partner. Prove that grouping cuts cost per installation.",
+  obstacle:"Financing for households without good credit, grid connection rules, and landlord-tenant splits.",
+  reality:[
+    "Renters and low-income households are usually excluded unless policy intervenes directly.",
+    "Rooftop solar does not substitute for grid-scale decarbonisation.",
+    "Cheap installation can mean poorly trained installers and early system failures."
+  ],
+  horizon:"Now", reach:"Regional", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Energy is a prerequisite for almost everything else. Cutting the cost of local generation directly increases household disposable income.",
+  tags:["energy","abundance","startnow","community"]
+},
+{
+  cat:"Energy",
+  title:"The Flexible Grid",
+  concept:"A coordination layer that lets millions of devices — water heaters, EVs, heat pumps, freezers — shift their demand to whenever electricity is cheapest and cleanest.",
+  body:"Most electricity demand is not time-critical. A house does not care whether its water is heated at 2am or 6pm. If millions of devices respond to a price and carbon signal, the grid needs fewer peaking plants and can accept far more renewables.",
+  ai:"Forecasting of demand, weather and renewable output; control policies that respect each household's comfort constraints; anomaly detection to prevent harm.",
+  who:"Everyone on the grid, through lower system costs — and households that get paid for flexibility.",
+  path:"Appliance manufacturers, aggregators and regulators. Start with commercial refrigeration and water heating, where flexibility is invisible to users.",
+  obstacle:"Regulation, privacy, and the fact that households must be genuinely compensated rather than merely enrolled.",
+  reality:[
+    "Poorly designed demand response can shift load in ways that hurt the grid.",
+    "Aggregators could capture most of the value, leaving households with pennies.",
+    "Device-level data reveals intimate details of home life — when people are in, asleep, or absent."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"High", leverage:"Fundamental", resource:"Moderate",
+  why:"Cheap, clean electricity lowers the cost of water, food, heating, cooling, transport and manufacturing simultaneously.",
+  tags:["energy","abundance","global","startnow"]
+},
+{
+  cat:"Energy",
+  title:"Fixing the Grid Before It Breaks",
+  concept:"Sensor networks and predictive models that find failing transformers, cables and substations weeks before they fail.",
+  body:"Utilities mostly do maintenance on a schedule or after an outage. Cheap thermal, acoustic and electrical sensors plus models trained on failure histories can flag the specific asset about to fail — so crews replace it on a Tuesday afternoon instead of at 3am in a storm.",
+  ai:"Anomaly detection on time-series sensor data, failure prediction, and crew scheduling that batches nearby repairs into one trip.",
+  who:"Everyone who depends on power — especially hospitals, water pumps and cold chains.",
+  path:"One utility, one asset class. Distribution transformers are the usual starting point.",
+  obstacle:"Legacy equipment, poor data quality, and utilities regulated on cost rather than on reliability.",
+  reality:[
+    "False alarms erode trust quickly and waste the crews the system was meant to save.",
+    "Better maintenance can be used to justify extending the life of fossil infrastructure.",
+    "The poorest customers often have the worst-maintained infrastructure regardless of prediction quality."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Outages are a hidden tax on the poor, who are least able to absorb spoiled food, lost work and unsafe temperatures.",
+  tags:["energy","governance","startnow"]
+},
+
+/* ---------------- WATER ---------------- */
+{
+  cat:"Water",
+  title:"Find the Leak",
+  concept:"Acoustic sensors and AI that locate water leaks to the metre, so utilities repair pipes instead of writing off lost water.",
+  body:"A large share of treated water never reaches a customer. Cheap vibration and pressure sensors along a distribution network, combined with models that recognise the acoustic signature of a leak, let crews dig in the right place the first time.",
+  ai:"Signal classification on noisy acoustic data, pressure-network modelling to localise the source, and prioritisation by litres lost per dollar of repair.",
+  who:"Cities facing water scarcity, ratepayers, and utilities that lose revenue on water they already paid to treat.",
+  path:"One district metered area with a known leak rate. Install sensors, repair what the model finds, publish the reduction.",
+  obstacle:"Sensor deployment cost across thousands of kilometres of pipe, and ageing infrastructure that fails faster than it can be fixed.",
+  reality:[
+    "Fixing leaks can increase consumption if water was previously rationed by scarcity.",
+    "Savings may be used to enable new development rather than to restore depleted aquifers.",
+    "Sensor data can reveal household water use in uncomfortable detail."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Non-revenue water in many cities exceeds 30%. That is water already treated, pumped and paid for, then lost.",
+  tags:["water","abundance","startnow","community"]
+},
+{
+  cat:"Water",
+  title:"Desalination That Sips Energy",
+  concept:"AI control of membrane desalination that cuts energy and chemical use by adapting continuously to changing seawater.",
+  body:"Desalination plants run on fixed setpoints while seawater temperature, salinity and fouling change hour by hour. Models that adjust pressure, flow and cleaning cycles in real time can reduce energy per cubic metre and extend membrane life significantly.",
+  ai:"Model-predictive control of the plant, fouling prediction, and optimisation across energy price and water demand.",
+  who:"Coastal cities and islands with no affordable freshwater alternative.",
+  path:"Retrofit one existing plant's control system — no new hardware required. Measure kilowatt-hours per cubic metre before and after.",
+  obstacle:"Brine disposal and capital cost. Efficiency gains do not fix the environmental problem of concentrated salt.",
+  reality:[
+    "Brine harms marine ecosystems and is often dumped with minimal regulation.",
+    "Desalination is a centralised, capital-intensive path that entrenches utility monopolies.",
+    "Cheap water can encourage consumption that the region cannot actually sustain."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"High", leverage:"Important", resource:"High",
+  why:"Fresh water is the most immediate climate constraint for a growing share of the world's population.",
+  tags:["water","abundance","environment"]
+},
+{
+  cat:"Water",
+  title:"The Aquifer Account",
+  concept:"Satellite and ground data that measure groundwater extraction in near real time, making invisible depletion visible and negotiable.",
+  body:"Groundwater is the classic tragedy of the commons: nobody can see it, so everybody pumps. Combining gravity satellites, well-level sensors and irrigation records produces a shared, verifiable picture of how much water is being taken and by whom.",
+  ai:"Data fusion across inconsistent sources, downscaling coarse satellite data to farm-level estimates, and anomaly detection on unmetered wells.",
+  who:"Farmers who depend on aquifers, and the cities and ecosystems that share them.",
+  path:"Start with a basin that already has a water authority and contested allocation. Publish the data openly.",
+  obstacle:"Measurement is political. Those pumping the most have the strongest incentive to keep the numbers private.",
+  reality:[
+    "Better data does not automatically produce better allocation — it just makes the argument sharper.",
+    "Monitoring can become surveillance of small farmers while large users remain unmeasured.",
+    "Enforcement without alternative livelihoods is punishment, not policy."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Important", resource:"Moderate",
+  why:"Aquifers feed a large share of global irrigation and take centuries to refill. Depleting them is borrowing from people who are not in the room.",
+  tags:["water","governance","environment","global"]
+},
+
+/* ---------------- MANUFACTURING ---------------- */
+{
+  cat:"Manufacturing",
+  title:"Microfactories Everywhere",
+  concept:"A network of small, AI-operated factories that make locally needed goods — furniture, pipes, brackets, parts — from local or recycled material.",
+  body:"Global supply chains are efficient until they are disrupted. A distributed network of small workshops with CNC machines, printers and robots, coordinated by software that routes each order to the nearest capable node, can produce many everyday goods much closer to where they are used.",
+  ai:"Order routing and capacity scheduling across nodes, generative design that adapts parts to locally available stock, and vision-based quality inspection.",
+  who:"Communities far from industrial centres, regions hit by supply shocks, and small towns that lost their manufacturing base.",
+  path:"Start with one product category — modular furniture or plumbing fittings — and a few workshops within a day's drive.",
+  obstacle:"Unit economics. Small factories rarely beat large ones on cost without coordinated demand.",
+  reality:[
+    "Distributed production can be dirtier and less efficient per unit than centralised plants.",
+    "Automation in small towns may create few local jobs while displacing existing ones.",
+    "It requires reliable power, connectivity and a maintenance skills base that may not exist locally."
+  ],
+  horizon:"5–15 years", reach:"Regional", feasibility:"Medium", leverage:"Fundamental", resource:"High",
+  why:"The cost of basic goods includes enormous amounts of transport, inventory and middle layers. Localising production can strip some of that out.",
+  tags:["manufacturing","abundance","robotics","community","big","moonshot"]
+},
+{
+  cat:"Manufacturing",
+  title:"Sorting the World's Waste",
+  concept:"AI vision and robotic sorting that turns mixed waste streams into clean, valuable material streams.",
+  body:"Recycling fails economically because sorting is expensive and imprecise. Fast vision systems combined with robotic pickers can separate plastics by polymer, remove contaminants, and produce bales that manufacturers will actually buy.",
+  ai:"Multi-spectral vision to identify material types, grasping and motion planning at speed, and predictive maintenance on fast-moving machinery.",
+  who:"Municipalities paying for landfill, informal waste pickers who could be formalised and paid better, and manufacturers needing cheap feedstock.",
+  path:"Retrofit one materials recovery facility. Measure bale purity and revenue before and after.",
+  obstacle:"The economics collapse whenever virgin plastic is cheap. Sorting cannot fix a market that prefers new material.",
+  reality:[
+    "Recycling has hard limits; much plastic is not economically recyclable at any scale.",
+    "Automation could displace informal waste pickers unless they are deliberately included in the design.",
+    "High-grading the valuable material can leave the remainder harder to handle than before."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Material recovery is one of the few interventions that reduces extraction and waste at the same time.",
+  tags:["manufacturing","environment","robotics","startnow"]
+},
+{
+  cat:"Manufacturing",
+  title:"Design for What's Available",
+  concept:"Generative design that takes a local inventory of materials and machines and produces products that can actually be made there.",
+  body:"Most product designs assume specific global supply chains. A design engine given a list of available materials, tools and skills can produce alternatives — a different joint, a different gauge, a different fastener — that work with what a local workshop actually has.",
+  ai:"Constraint-based generative design, manufacturing simulation, and substitution reasoning across material properties.",
+  who:"Small workshops, disaster-affected regions cut off from supply, and communities rebuilding local production.",
+  path:"One product — a water pump part, a wheelchair, a roof bracket — one workshop, real use.",
+  obstacle:"Certification. A redesigned part usually cannot be legally used in safety-critical applications.",
+  reality:[
+    "Generated designs can be unsafe in ways that non-experts cannot see.",
+    "Quality control in small workshops is the real constraint, not design capability.",
+    "Cheap local copies can undercut the safety standards that protect users."
+  ],
+  horizon:"5–15 years", reach:"Regional", feasibility:"Medium", leverage:"Important", resource:"Low",
+  why:"Much of the cost of goods is the cost of conforming to a supply chain that does not exist locally.",
+  tags:["manufacturing","abundance","community","science"]
+},
+
+/* ---------------- LOGISTICS ---------------- */
+{
+  cat:"Logistics",
+  title:"Fill the Empty Truck",
+  concept:"A matching layer that fills the empty return legs of freight vehicles, cutting the number of trucks on the road for the same amount of goods.",
+  body:"A large fraction of freight kilometres are driven empty. Matching return loads is hard because it requires real-time visibility across many carriers and shippers — exactly the kind of coordination problem software handles well.",
+  ai:"Load matching, route optimisation, and ETA prediction reliable enough that multi-party commitments can actually be signed.",
+  who:"Shippers paying for freight, carriers with thin margins, and everyone breathing roadside air.",
+  path:"Start with one region and one commodity type with predictable flows, such as agricultural inputs.",
+  obstacle:"Trust and contracting. Carriers are reluctant to depend on loads they do not control.",
+  reality:[
+    "Efficiency gains can induce more freight demand overall, cancelling part of the saving.",
+    "Small carriers may be squeezed by platforms that set the rates.",
+    "Driver surveillance is often bundled quietly into these systems."
+  ],
+  horizon:"Now", reach:"National", feasibility:"High", leverage:"Important", resource:"Low",
+  why:"Transport is embedded in the price of every physical necessity. Removing empty kilometres lowers costs and emissions at once.",
+  tags:["logistics","abundance","startnow","global"]
+},
+{
+  cat:"Logistics",
+  title:"Pre-Positioning for Disaster",
+  concept:"Forecasting that moves food, water, shelter materials and medical supplies into place before a disaster hits, rather than after.",
+  body:"Humanitarian response is mostly reactive. Models that combine weather, conflict, crop and market data can produce probabilistic forecasts of displacement and need weeks ahead, letting agencies pre-position stock and pre-contract transport while roads still exist.",
+  ai:"Forecasting of displacement and need, route planning under damaged infrastructure, and allocation of scarce stock across competing crises.",
+  who:"Populations hit by floods, storms, drought and conflict.",
+  path:"One region with recurring seasonal disasters. Compare response times and costs against the current reactive baseline.",
+  obstacle:"Political will and funding cycles. Money for prevention is harder to raise than money for visible emergency response.",
+  reality:[
+    "Forecasts can be wrong, and pre-positioned stock can be wasted, spoiled or captured.",
+    "Aid can distort local markets and undermine the producers it displaces.",
+    "Data on vulnerable populations can be misused by hostile actors if it leaks."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Important", resource:"High",
+  why:"The difference between pre-positioned and airlifted aid is often measured in lives — and in multiples of cost.",
+  tags:["logistics","governance","global"]
+},
+{
+  cat:"Logistics",
+  title:"Medicine That Arrives",
+  concept:"Forecasting and logistics that keep clinics stocked with the medicines they actually use, eliminating stockouts and expiry waste at the same time.",
+  body:"Clinics run out of essential medicines and simultaneously discard expired stock. Demand forecasting from consumption, seasonality and disease surveillance — combined with redistribution between facilities — can address both problems with the same system.",
+  ai:"Facility-level demand forecasting, redistribution routing, expiry prediction, and anomaly detection on consumption data.",
+  who:"Patients who currently walk to a clinic and find nothing.",
+  path:"One district health system, one list of essential medicines. Measure stockout days before and after.",
+  obstacle:"Procurement is political, and supply chains are often centrally controlled by people who benefit from opacity.",
+  reality:[
+    "Forecasting fails in outbreaks and emergencies — exactly when it matters most.",
+    "Centralised data on medicine use can be misused or sold.",
+    "Better logistics can mask the fact that the medicines are simply unaffordable."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"A medicine that exists but is in the wrong place is a medicine that does not exist.",
+  tags:["health","logistics","startnow","global"]
+},
+
+/* ---------------- ECONOMICS ---------------- */
+{
+  cat:"Economics",
+  title:"The Cost of the Basics",
+  concept:"A public, continuously updated index of what a dignified minimum basket actually costs — and coordinated procurement that drives that cost down.",
+  body:"Governments debate poverty lines using stale baskets. A live index tracking food, energy, water, shelter, transport, connectivity and basic medicine lets policy respond to reality. Bulk procurement through the same system can lower unit costs for public provision.",
+  ai:"Price scraping and anomaly detection, basket composition modelling, and demand forecasting for procurement.",
+  who:"Anyone near the poverty line, and the agencies trying to design policy for them.",
+  path:"Start with a single city and a transparent, open methodology. Publish the data and the code.",
+  obstacle:"Defining the basket is a political act, not a technical one.",
+  reality:[
+    "Measurement can become a substitute for action rather than a precursor to it.",
+    "Bulk procurement can crush small local producers who cannot compete on volume.",
+    "A single national index can hide enormous regional variation in what things actually cost."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"High", leverage:"Helpful", resource:"Low",
+  why:"You cannot reduce the cost of the basics if you do not measure it honestly and often.",
+  tags:["economics","governance","abundance","startnow"]
+},
+{
+  cat:"Economics",
+  title:"The Cooperative Engine",
+  concept:"Software that makes it practical to run large cooperatives — handling patronage, voting, accounting and distribution at a scale that used to require a bureaucracy.",
+  body:"Cooperatives often fail because administration is expensive and governance is exhausting. Automating the routine — member records, surplus distribution, transparent voting, dispute resolution — lets cooperative ownership work at a much larger scale.",
+  ai:"Automated accounting and audit, summarisation of proposals for members, fraud detection, and translation so members can participate in their own language.",
+  who:"Workers, farmers, tenants and communities who want ownership without an extra management layer.",
+  path:"Partner with an existing cooperative federation. Deploy on one function — patronage distribution — and expand from there.",
+  obstacle:"Trust. Members must believe the system is not quietly serving whoever wrote it.",
+  reality:[
+    "Software encodes governance, so whoever designs it shapes power.",
+    "Automating participation can reduce genuine deliberation to clicking a button.",
+    "Cooperatives are not automatically egalitarian; they can reproduce every hierarchy they replace."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Helpful", resource:"Low",
+  why:"Ownership determines who captures the gains from productivity. Tools that make shared ownership practical widen the set of possible futures.",
+  tags:["economics","community","governance","startnow"]
+},
+{
+  cat:"Economics",
+  title:"The Productivity Dividend",
+  concept:"Transparent mechanisms for distributing the gains from automation to the people whose work it replaces or augments.",
+  body:"If AI raises output per worker, the question is who receives the difference. Options include sovereign wealth funds seeded by automation levies, universal basic capital accounts, or sectoral funds that pay out when an industry automates. Each requires a ledger that people can actually inspect.",
+  ai:"Contribution accounting, fraud detection, and simulation of distributional outcomes before policies are enacted.",
+  who:"Workers in automating sectors, and societies facing widening inequality.",
+  path:"Start at the level of a single sector or a single company with a codetermination agreement. Publish the formula.",
+  obstacle:"Political economy. Those who capture the gains rarely volunteer to redistribute them.",
+  reality:[
+    "Easy to design, hard to enforce across borders where capital can move freely.",
+    "Payouts can be framed as charity rather than entitlement, and cut at will.",
+    "Badly designed, it can end up subsidising the very automation that caused the displacement."
+  ],
+  horizon:"15+ years", reach:"National", feasibility:"Low", leverage:"Helpful", resource:"High",
+  why:"Productivity gains are not automatically shared. Whether they are is a choice, and choices need mechanisms.",
+  tags:["economics","governance","global","big","moonshot"]
+},
+{
+  cat:"Economics",
+  title:"The Price Watchdog",
+  concept:"AI that detects collusion, gouging and anti-competitive behaviour in markets for necessities, using patterns no human regulator could scan.",
+  body:"Essential markets — food, fuel, rent, medicine — are vulnerable to coordination that is hard to prove. Models can detect abnormal pricing patterns, suspicious parallel behaviour and market structures that correlate with consumer harm, producing leads for regulators.",
+  ai:"Anomaly detection across pricing data, graph analysis of ownership and contracting, and text analysis of communications when lawfully obtained.",
+  who:"Consumers, especially those spending most of their income on necessities.",
+  path:"Partner with one national competition authority that already collects the data.",
+  obstacle:"Legal standards and evidentiary rules. Detection is not proof, and proof is what regulators need.",
+  reality:[
+    "False positives can punish innocent firms and destroy reputations.",
+    "Regulators may lack the capacity or the will to act on what is found.",
+    "Surveillance powers created for pricing can be repurposed for other purposes."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"Medium", leverage:"Important", resource:"Moderate",
+  why:"Competition policy is one of the few tools that reliably lowers the cost of necessities without new public spending.",
+  tags:["economics","governance"]
+},
+
+/* ---------------- EDUCATION ---------------- */
+{
+  cat:"Education",
+  title:"A Tutor for Everyone",
+  concept:"A patient, personalised tutor available to every learner, in their language, on a cheap phone, working offline.",
+  body:"One-to-one tutoring is one of the most effective interventions in education and one of the least available. A model that adapts to what a learner actually misunderstands — and that runs on low-end hardware or syncs when connectivity appears — changes the economics of instruction entirely.",
+  ai:"Adaptive question selection, misconception diagnosis, and explanation generation tuned to the learner's level, language and context.",
+  who:"Children in under-resourced schools, adults retraining, and anyone learning outside a formal system.",
+  path:"One subject, one grade band, one language, with a school system willing to measure outcomes honestly.",
+  obstacle:"Devices, connectivity and teacher trust. Good tutoring requires knowing the learner, which raises privacy questions.",
+  reality:[
+    "Screen time is not learning; a bad tutor application can waste years of a child's education.",
+    "Models embed cultural and linguistic bias in what they teach and how they teach it.",
+    "Teachers may be blamed for outcomes while being given no additional support.",
+    "Commercial tutors may capture the market and widen the gap they were meant to close."
+  ],
+  horizon:"1–5 years", reach:"Global", feasibility:"High", leverage:"Fundamental", resource:"Moderate",
+  why:"Education is the main mechanism by which people escape the circumstances they were born into, and it is rationed by cost and geography.",
+  tags:["education","abundance","startnow","global"]
+},
+{
+  cat:"Education",
+  title:"The Skill Graph",
+  concept:"A live map of what skills local employers actually need, connected directly to training that produces them.",
+  body:"Vocational training often teaches yesterday's skills. A system that reads job postings, apprenticeship records and industry forecasts can tell a training provider what to teach next term, and tell a learner which skills lead to work in their own region.",
+  ai:"Skill extraction from unstructured job data, demand forecasting, and curriculum gap analysis.",
+  who:"Job seekers, students choosing a path, and training institutions with limited budgets.",
+  path:"One region, one industry partnership, one training provider. Publish placement rates.",
+  obstacle:"Data access and employer participation. Employers often will not share their hiring plans.",
+  reality:[
+    "Optimising for current demand can trap people in roles that are about to be automated.",
+    "Forecasts can entrench bias about who fits which job.",
+    "A narrow vocational focus can undermine broader education and adaptability."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Helpful", resource:"Low",
+  why:"The gap between available work and available skills is one of the most wasteful frictions in any economy.",
+  tags:["education","economics","startnow","community"]
+},
+{
+  cat:"Education",
+  title:"The Language Bridge",
+  concept:"Real-time translation and materials generation that lets children learn in their mother tongue while still accessing the national curriculum.",
+  body:"Hundreds of millions of children are taught in a language they do not speak at home, which suppresses early literacy. Translation and speech models can deliver curriculum content in local languages, and generate the reading materials that barely exist today.",
+  ai:"Machine translation tuned for education, speech recognition for low-resource languages, and generation of levelled reading material.",
+  who:"Children in multilingual societies, Indigenous communities, and migrant families.",
+  path:"One language pair, one grade level, one region. Measure literacy outcomes, not just usage.",
+  obstacle:"Low-resource languages have little training data, and translation quality for children must be very high.",
+  reality:[
+    "Poor translation teaches errors that are hard to unlearn later.",
+    "Digitising curriculum can marginalise oral and community knowledge that has no written form.",
+    "Language data extraction raises serious consent issues for Indigenous communities."
+  ],
+  horizon:"1–5 years", reach:"Global", feasibility:"Medium", leverage:"Fundamental", resource:"Low",
+  why:"Early literacy in a familiar language predicts almost everything that follows in education.",
+  tags:["education","global","abundance"]
+},
+
+/* ---------------- HEALTH ---------------- */
+{
+  cat:"Health",
+  title:"Triage at the Edge",
+  concept:"AI-assisted triage that helps community health workers decide who needs a clinic, who needs a hospital, and who can be treated at home.",
+  body:"Where there are few doctors, the first decision is the most important one. A guided assessment tool on a tablet or phone can help a health worker take a history, check danger signs, and follow a protocol — with a clear escalation path whenever the system is uncertain.",
+  ai:"Structured symptom assessment, risk scoring, image analysis for a narrow set of conditions, and referral routing.",
+  who:"Rural and underserved populations, community health workers, and overcrowded clinics.",
+  path:"One district, one health-worker cadre, one set of conditions. Validate against clinician judgement before scaling.",
+  obstacle:"Clinical validation, liability, and the risk of over-triage overwhelming already-full referral hospitals.",
+  reality:[
+    "A wrong triage decision can kill someone who would have survived.",
+    "Models trained on other populations often fail on the one in front of them.",
+    "Automation can shift responsibility onto the least-trained and least-paid workers in the system."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"Medium", leverage:"Fundamental", resource:"Moderate",
+  why:"Most preventable deaths happen before a patient ever reaches a qualified clinician.",
+  tags:["health","startnow","global","community"]
+},
+{
+  cat:"Health",
+  title:"Old Drugs, New Uses",
+  concept:"Systematic AI screening of existing, off-patent medicines for new indications — cheap to test, almost impossible to discover by hand.",
+  body:"The most affordable new treatments are often old molecules used differently. Models can search interaction networks, literature and trial data for compounds that might work against a different disease, producing candidates that are already known to be safe in humans.",
+  ai:"Knowledge graph reasoning across biomedical literature, trial registries and molecular data, ranking candidates by plausibility and safety.",
+  who:"Patients with neglected diseases that offer no profit to drug developers.",
+  path:"Nonprofit and academic trial networks can run small, cheap trials on off-patent drugs without a commercial sponsor.",
+  obstacle:"No patent means no funder. The economics of drug development actively discourage this work.",
+  reality:[
+    "Most computational repurposing candidates fail in trials; the hit rate is low.",
+    "Without a manufacturer willing to produce it, a proven new use may never reach patients.",
+    "Publication bias can make models systematically overconfident."
+  ],
+  horizon:"5–15 years", reach:"Global", feasibility:"Medium", leverage:"Important", resource:"Moderate",
+  why:"Medicine already contains thousands of safe compounds. Finding new uses for them is far cheaper than inventing new ones.",
+  tags:["health","science","global"]
+},
+{
+  cat:"Health",
+  title:"Prediction That Prevents",
+  concept:"Models that identify who is about to become seriously ill, and route them to cheap preventive care before the expensive crisis.",
+  body:"Health systems pay enormous sums for emergencies that were visible months in advance. Combining clinical records, prescriptions, social factors and wearable data can flag rising risk and trigger a human follow-up — a call, a home visit, a medication review.",
+  ai:"Risk stratification across messy records, deterioration prediction, and prioritisation of a limited outreach team's time.",
+  who:"People with chronic conditions, and health systems that cannot afford to treat every crisis.",
+  path:"One clinic network, one condition — say, avoidable admissions for heart failure — with a real outreach team attached.",
+  obstacle:"Prediction without capacity is useless. Someone has to make the call and visit the house.",
+  reality:[
+    "Risk scores can encode and amplify existing discrimination in healthcare.",
+    "Being labelled high-risk can itself harm people through insurance or employment.",
+    "Preventive programmes often widen inequality because the easiest to reach are the easiest to help."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"Medium", leverage:"Important", resource:"Moderate",
+  why:"Prevention is almost always cheaper than treatment, and almost always harder to fund.",
+  tags:["health","startnow","global"]
+},
+
+/* ---------------- ENVIRONMENT ---------------- */
+{
+  cat:"Environment",
+  title:"Where Restoration Pays Off Most",
+  concept:"Optimisation that tells you which hectares to restore for the most carbon, water, biodiversity and community benefit per dollar.",
+  body:"Restoration budgets are small and scattered. Models that combine ecology, hydrology, land tenure and cost data can rank sites by expected benefit — and identify where restoration would simultaneously reduce flood risk or improve water supply for nearby towns.",
+  ai:"Spatial optimisation across multiple objectives, satellite monitoring of outcomes, and prediction of ecological trajectories.",
+  who:"Downstream communities, farmers, and the ecosystems themselves.",
+  path:"One watershed with an existing restoration programme and a modest budget.",
+  obstacle:"Land tenure. You cannot restore what someone else controls and does not want restored.",
+  reality:[
+    "Carbon-focused restoration can produce monoculture plantations that harm biodiversity.",
+    "Restoration can displace the people who use the land informally and have no title.",
+    "Monitoring often stops before outcomes are known, so lessons are never learned."
+  ],
+  horizon:"1–5 years", reach:"Regional", feasibility:"High", leverage:"Important", resource:"Moderate",
+  why:"Ecosystems provide water, food, cooling and flood protection for free — until they stop working.",
+  tags:["environment","science","global"]
+},
+{
+  cat:"Environment",
+  title:"The Methane Hunter",
+  concept:"Satellite and sensor networks that find methane leaks within days and dispatch repairs automatically.",
+  body:"Methane traps far more heat than carbon dioxide over short periods, and a large share of emissions come from a small number of leaks. Detection is now cheap; the bottleneck is turning a detection into an actual repair.",
+  ai:"Plume detection from hyperspectral imagery, attribution to specific facilities, and automated work-order dispatch and verification.",
+  who:"Everyone affected by near-term warming — and operators who lose saleable gas.",
+  path:"Start with one producing region and a regulatory requirement to repair within a set period.",
+  obstacle:"Enforcement, and the fact that some leaks occur where no one has clear jurisdiction.",
+  reality:[
+    "Detection without enforcement changes nothing at all.",
+    "Operators may choose to flare rather than repair, trading one problem for another.",
+    "Monitoring systems can be used to surveil communities living near extraction sites."
+  ],
+  horizon:"Now", reach:"Global", feasibility:"High", leverage:"Important", resource:"Low",
+  why:"Cutting short-lived climate pollutants is the fastest available way to slow warming.",
+  tags:["environment","governance","startnow","global"]
+},
+{
+  cat:"Environment",
+  title:"Listening to the Ecosystem",
+  concept:"Cheap acoustic sensors and AI that monitor biodiversity continuously by identifying species from sound.",
+  body:"Ecological monitoring usually means a biologist visiting a site a few times a year. Cheap recorders left in place, combined with models that identify birds, frogs, insects and bats by call, produce a continuous picture of whether an ecosystem is recovering or collapsing.",
+  ai:"Bioacoustic classification across thousands of species, anomaly detection for unusual silence, and long-term trend analysis.",
+  who:"Conservation managers, Indigenous land stewards, and everyone downstream of ecosystem collapse.",
+  path:"One protected area or restoration site with a clear before-and-after question.",
+  obstacle:"Reference data for most species is thin, and a classifier that misses rare species misses what matters most.",
+  reality:[
+    "Recording devices in forests and communities raise real privacy concerns.",
+    "Species detection is not ecosystem health; the model measures what it can hear.",
+    "Monitoring can substitute for protection if it produces reports instead of enforcement."
+  ],
+  horizon:"Now", reach:"Regional", feasibility:"High", leverage:"Important", resource:"Low",
+  why:"You cannot protect what you cannot see, and most of the living world is invisible to current monitoring.",
+  tags:["environment","science","startnow","global"]
+},
+
+/* ---------------- GOVERNANCE ---------------- */
+{
+  cat:"Governance",
+  title:"Budget by Deliberation",
+  concept:"AI-assisted participatory budgeting that lets residents allocate real public money with informed, structured deliberation.",
+  body:"Participatory budgeting works but does not scale past a few thousand participants. Language models can summarise proposals, translate them, surface trade-offs and cost implications, and cluster similar ideas — so deliberation stays informed as participation grows.",
+  ai:"Summarisation and translation, cost modelling of proposals, clustering of citizen input, and detection of organised manipulation.",
+  who:"Residents of cities with discretionary budgets and low trust in government.",
+  path:"One municipality, one real budget line, one cycle. Compare decisions and satisfaction against the previous process.",
+  obstacle:"Whoever controls the summarisation controls the framing. This is a serious concentration-of-power risk.",
+  reality:[
+    "Summaries can distort what citizens actually said, usually without anyone noticing.",
+    "Digital participation skews toward those with time, connectivity and confidence.",
+    "Governments may adopt the process for legitimacy without ceding any real power."
+  ],
+  horizon:"1–5 years", reach:"Local", feasibility:"Medium", leverage:"Important", resource:"Low",
+  why:"Public resources are routinely misallocated by the distance between decision-makers and the people affected.",
+  tags:["governance","community","startnow"]
+},
+{
+  cat:"Governance",
+  title:"The Integrity Scanner",
+  concept:"AI review of public procurement that flags bid rigging, phantom suppliers and conflicts of interest before contracts are signed.",
+  body:"Public procurement is where a large share of corruption lives. Models can cross-reference bid patterns, company registries, ownership structures and delivery records to surface anomalies — giving auditors leads instead of leaving them to read thousands of pages.",
+  ai:"Network analysis of ownership, anomaly detection in bidding patterns, document comparison, and risk scoring.",
+  who:"Citizens whose taxes fund the contracts, and honest officials competing against rigged tenders.",
+  path:"One procurement authority with open data, and an independent auditor willing to act on leads.",
+  obstacle:"Political will. The people who benefit from corruption are often the ones who would have to approve the system.",
+  reality:[
+    "Risk scores can be weaponised against political opponents.",
+    "Flagging without due process destroys innocent businesses and lives.",
+    "Corruption adapts; any model must be continuously retrained against new evasion."
+  ],
+  horizon:"1–5 years", reach:"National", feasibility:"Medium", leverage:"Important", resource:"Low",
+  why:"Corruption is one of the largest single taxes on the poor, paid in roads that were never built and clinics that never opened.",
+  tags:["governance","economics","global"]
+},
+{
+  cat:"Governance",
+  title:"The Infrastructure Twin",
+  concept:"A living model of a city's water, power, roads and drainage that lets planners test decisions before spending billions.",
+  body:"Cities manage interdependent systems through separate departments and separate spreadsheets. A shared digital twin — fed by sensors and asset records — lets planners see how a new district affects drainage, or which substation will fail first.",
+  ai:"Sensor fusion, simulation, scenario modelling, and prioritisation of maintenance across systems.",
+  who:"Residents who live with the consequences of planning decisions made decades earlier.",
+  path:"One city, one system — say, drainage — with a clear use case and a decision that genuinely depends on it.",
+  obstacle:"Data silos and institutional turf. The model is the easy part.",
+  reality:[
+    "Models are only as good as the data, and city data is often terrible.",
+    "Simulation can be used to justify decisions that were already made.",
+    "Large vendors can lock cities into expensive long-term contracts."
+  ],
+  horizon:"5–15 years", reach:"National", feasibility:"Medium", leverage:"Important", resource:"High",
+  why:"Infrastructure decisions lock in costs and emissions for decades, and are usually made with poor information.",
+  tags:["governance","science","big"]
+},
+
+/* ---------------- COMMUNITY ---------------- */
+{
+  cat:"Community",
+  title:"The Mutual Aid Mesh",
+  concept:"A local matching system that connects people who need something with neighbours who have it — a spare room, a lift, a meal, a skill, an hour.",
+  body:"Mutual aid already exists everywhere; it is just badly coordinated. A lightweight system can make requests and offers visible within a neighbourhood, coordinate volunteers, and track commitments without turning care into a marketplace.",
+  ai:"Matching, scheduling, translation and summarisation, so that coordination does not fall on one exhausted organiser.",
+  who:"Isolated people, recent arrivals, and anyone in a temporary crisis.",
+  path:"One neighbourhood association and an existing group chat. Start with a single category of need.",
+  obstacle:"Trust and scale. Mutual aid works because people know each other; software can erode exactly that.",
+  reality:[
+    "Turning care into transactions can corrode the thing that made it work.",
+    "Data about vulnerable people is dangerous if it leaks.",
+    "Digital tools exclude the people who most need help — the elderly, the offline, the overwhelmed."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Helpful", resource:"Low",
+  why:"Before institutions reach people, neighbours do. Strengthening that layer makes every other system more resilient.",
+  tags:["community","startnow","abundance"]
+},
+{
+  cat:"Community",
+  title:"The Shared Kitchen",
+  concept:"Community kitchens with AI-assisted planning that turn donated and surplus food into reliable, low-cost meals at scale.",
+  body:"A kitchen that knows what is coming in can plan menus, batch-cook, and distribute consistently. Models forecast incoming donations, plan meals that meet nutritional needs, and coordinate volunteers so the kitchen does not depend on one heroic person who eventually burns out.",
+  ai:"Menu planning under nutritional and supply constraints, volunteer scheduling, and demand forecasting by neighbourhood.",
+  who:"Food-insecure households, isolated elderly people, and anyone who needs a cheap hot meal without stigma.",
+  path:"One kitchen, one neighbourhood, an existing food-rescue supply. Measure meals served and cost per meal.",
+  obstacle:"Premises, food safety regulation, and the fact that charity meals are not a substitute for income.",
+  reality:[
+    "Emergency food provision can let governments avoid addressing poverty directly.",
+    "Volunteer labour is unevenly distributed and easily exhausted.",
+    "Nutritional quality often suffers when supply is unpredictable and planning is reactive."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Helpful", resource:"Low",
+  why:"A hot meal is the most immediate form of dignity, and the cheapest to deliver when supply and labour are coordinated.",
+  tags:["food","community","startnow"]
+},
+{
+  cat:"Community",
+  title:"The Tool Library",
+  concept:"A lending library for tools, equipment and machines that most households need occasionally and cannot justify owning.",
+  body:"A drill, a ladder, a carpet cleaner, a trailer, a sewing machine — each used a few times a year, each costing real money and occupying real space. A shared inventory with booking, maintenance and deposit management makes ownership unnecessary for most people.",
+  ai:"Demand forecasting for what to buy next, maintenance scheduling, booking optimisation, and reputation systems that reduce loss.",
+  who:"Low-income households, renters with no storage, and anyone who needs a thing once.",
+  path:"One neighbourhood, one shipping container, one hundred members. Track utilisation and loss rates.",
+  obstacle:"Theft, breakage and the labour of running it. Libraries die from admin, not from lack of demand.",
+  reality:[
+    "Loss and damage rates can make the economics worse than expected.",
+    "Deposit requirements can exclude the people who would benefit most.",
+    "It competes with rental businesses that already serve the same need, often better."
+  ],
+  horizon:"Now", reach:"Local", feasibility:"High", leverage:"Helpful", resource:"Low",
+  why:"Owning things you rarely use is a quiet tax on household budgets and on the resources used to make them.",
+  tags:["community","abundance","startnow","economics"]
+},
+
+/* ---------------- SCIENCE ---------------- */
+{
+  cat:"Science",
+  title:"Laboratories That Run Themselves",
+  concept:"Closed-loop automated labs where AI designs experiments, robots run them, and results feed straight back into the next design.",
+  body:"Scientific discovery is limited by how many experiments a human can physically run and interpret. Self-driving labs close the loop: a model proposes candidates, robotic systems synthesise and test them, and the results update the model overnight.",
+  ai:"Bayesian experiment design, robotic planning, and automated analysis of instrumental data.",
+  who:"Everyone who benefits from faster materials, medicines and catalysts.",
+  path:"One lab, one narrow problem — catalysts for a specific reaction — with a clear success metric.",
+  obstacle:"Capital cost and the cultural resistance of a scientific system built around individual credit.",
+  reality:[
+    "Automation can narrow science toward what is easy to automate.",
+    "Reproducibility problems get faster, not better, when nobody reads the methods.",
+    "Benefits accrue to well-funded institutions, widening the gap between universities and countries."
+  ],
+  horizon:"5–15 years", reach:"Global", feasibility:"Medium", leverage:"Fundamental", resource:"High",
+  why:"The rate of discovery is a limiting factor on almost every other idea on this list.",
+  tags:["science","big","global","moonshot"]
+},
+{
+  cat:"Science",
+  title:"From Paper to Practice",
+  concept:"AI that turns the world's research literature into usable guidance for the people who actually apply it — nurses, farmers, builders, teachers.",
+  body:"Vast amounts of useful knowledge are locked in paywalled papers written for other researchers. Summarisation and synthesis can produce practical, locally adapted guidance — and, just as importantly, show clearly what the evidence does not support.",
+  ai:"Retrieval and synthesis across literature, appraisal of study quality, and adaptation to local context and language.",
+  who:"Practitioners without journal access, and the people they serve.",
+  path:"One domain — maternal health or crop disease — one practitioner network, one format.",
+  obstacle:"Quality control. A plausible summary of bad evidence is worse than no summary at all.",
+  reality:[
+    "Models can confidently synthesise conclusions that were never in the literature.",
+    "Paywalls and licensing restrict even lawful use of the underlying work.",
+    "Summaries strip nuance and uncertainty, which are often the most important part."
+  ],
+  horizon:"1–5 years", reach:"Global", feasibility:"High", leverage:"Fundamental", resource:"Low",
+  why:"Humanity already knows how to do a great deal of what it needs. The knowledge just does not reach the people doing the work.",
+  tags:["science","education","global","startnow","abundance"]
+},
+
+/* ---------------- ROBOTICS ---------------- */
+{
+  cat:"Robotics",
+  title:"Construction Crews That Don't Sleep",
+  concept:"Coordinated teams of construction robots that build standardised structures at night, with human crews handling design, exceptions and finishing.",
+  body:"Construction is one of the least automated industries and one of the most expensive. Robots that can lay brick, place modules, weld and move material — coordinated by a shared site model — could compress build times dramatically.",
+  ai:"Multi-robot task allocation, perception in unstructured environments, and safe operation alongside human workers.",
+  who:"Everyone who needs housing, and construction workers who move from dangerous tasks to skilled ones.",
+  path:"Start with one repetitive task — bricklaying or modular placement — on a site with a cooperative contractor.",
+  obstacle:"Unstructured sites, safety regulation, and a workforce that has every reason to resist.",
+  reality:[
+    "Displacing construction labour without a transition plan is a serious and immediate harm.",
+    "Robots are poor at the exceptions that dominate real construction sites.",
+    "Capital intensity favours large firms and concentrates the market further."
+  ],
+  horizon:"5–15 years", reach:"Regional", feasibility:"Medium", leverage:"Fundamental", resource:"High",
+  why:"Shelter cost is dominated by labour and time. Automating the repetitive parts changes the arithmetic of housing.",
+  tags:["robotics","shelter","big"]
+},
+{
+  cat:"Robotics",
+  title:"The Inspection Swarm",
+  concept:"Cheap drones and crawling robots that inspect bridges, pipes, dams and power lines continuously, so repairs happen before failure.",
+  body:"Infrastructure fails because inspection is expensive and infrequent. Small robots with cameras and sensors can inspect continuously at a fraction of the cost of manual crews, and models can compare inspections over time to detect deterioration.",
+  ai:"Defect detection in imagery, change detection across inspections, and prioritisation of repairs by risk and cost.",
+  who:"Everyone who uses public infrastructure — which is everyone.",
+  path:"One bridge authority, one asset class. Compare defect detection against manual inspection on the same structures.",
+  obstacle:"Procurement and institutional inertia — and someone still has to actually do the repairs.",
+  reality:[
+    "Detection without maintenance budgets produces reports nobody acts on.",
+    "Cheap inspection may quietly substitute for deeper structural assessment.",
+    "Drone surveillance raises privacy concerns when flown over populated areas."
+  ],
+  horizon:"Now", reach:"National", feasibility:"High", leverage:"Important", resource:"Low",
+  why:"Deferred maintenance is a debt that eventually comes due, usually at the worst possible moment.",
+  tags:["robotics","governance","startnow","global"]
+},
+{
+  cat:"Robotics",
+  title:"Help at Home, Without a Stranger",
+  concept:"Assistive robots and ambient sensing that let older and disabled people live independently longer, with dignity and control.",
+  body:"A growing share of the population needs help with daily tasks while wanting to stay in their own home. A combination of manipulators, mobility aids and ambient sensing can handle the routine — fetching, cleaning, reminding, alerting — while preserving privacy and choice.",
+  ai:"Perception and manipulation in cluttered homes, activity recognition, anomaly detection for falls and emergencies, and speech interfaces.",
+  who:"Older adults, disabled people, and the family members who currently provide unpaid care.",
+  path:"One task, one user group, one housing provider. Start with fall detection and medication reminders — simpler and already valuable.",
+  obstacle:"Cost, reliability and trust. A robot that fails in a kitchen is a hazard, not a helper.",
+  reality:[
+    "Surveillance disguised as care is a serious and predictable risk.",
+    "Robots may substitute for human contact, which is itself a health intervention.",
+    "Costs will initially exclude the people with the least money and the most need."
+  ],
+  horizon:"5–15 years", reach:"National", feasibility:"Medium", leverage:"Fundamental", resource:"High",
+  why:"Care work is the largest unpaid labour force in the world, and it falls disproportionately on women.",
+  tags:["robotics","health","community","big","moonshot"]
+},
+{
+  cat:"Water",
+  title:"Drinking Water From Air",
+  concept:"AI-optimised atmospheric water harvesting that produces drinking water in humid regions without wells or pipes.",
+  body:"Condensation and sorbent-based systems can pull water from air, but they are energy-hungry and finicky. Models that predict humidity cycles and control the adsorption and release timing can improve yields significantly using cheap, intermittent power.",
+  ai:"Weather forecasting to schedule cycles, control of sorbent beds, and predictive maintenance on small distributed systems.",
+  who:"Off-grid households in humid climates, clinics, and schools.",
+  path:"Deploy units in one humid region with solar power. Measure litres per kilowatt-hour against the alternatives.",
+  obstacle:"Thermodynamics. In dry air, there is simply very little water to collect, whatever the model does.",
+  reality:[
+    "Energy cost per litre is often higher than every other available option.",
+    "Only viable in specific climates, so it cannot be a general solution to water scarcity.",
+    "Maintenance and consumables often fail in exactly the remote settings where it is needed."
+  ],
+  horizon:"5–15 years", reach:"Local", feasibility:"Medium", leverage:"Helpful", resource:"Moderate",
+  why:"For scattered populations far from any pipe, a household-scale source of drinking water changes what is possible.",
+  tags:["water","moonshot","community","environment"]
+}
+];
+
+/* ============================================================
+   2. METADATA
+   ============================================================ */
+const CAT_ACCENT = {
+  Food:"#d9a45c", Shelter:"#9fb0c4", Energy:"#e0c063", Water:"#6fa9c9",
+  Manufacturing:"#b79a86", Logistics:"#8fb59a", Economics:"#c9a3a3",
+  Education:"#a9b8dc", Health:"#89c7ae", Environment:"#84b16e",
+  Governance:"#b0a8cb", Community:"#d6a2bb", Science:"#8cb6d9", Robotics:"#a3abb4"
+};
+
+const MODES = {
+  foryou:    {label:"For You",   blurb:"A broad mix of everything", f:()=>true},
+  food:      {label:"Food",      blurb:"Growing, moving and sharing food", f:i=>i.tags.includes("food")},
+  shelter:   {label:"Shelter",   blurb:"Housing, construction and land", f:i=>i.tags.includes("shelter")},
+  abundance: {label:"Abundance", blurb:"Driving down the cost of necessities", f:i=>i.tags.includes("abundance")},
+  robotics:  {label:"Robotics",  blurb:"Physical automation in the world", f:i=>i.tags.includes("robotics")},
+  big:       {label:"Big Ideas", blurb:"Extremely ambitious concepts", f:i=>i.tags.includes("big")},
+  startnow:  {label:"Start Now", blurb:"Could be prototyped today", f:i=>i.tags.includes("startnow")},
+  moonshot:  {label:"Moonshots", blurb:"Long-term and speculative", f:i=>i.tags.includes("moonshot")},
+  community: {label:"Community", blurb:"Local-scale approaches", f:i=>i.tags.includes("community")},
+  global:    {label:"Global",    blurb:"Civilisation-scale concepts", f:i=>i.tags.includes("global")}
+};
+
+IDEAS.forEach((x,i)=>{ x.id=i; x.num=String(i+1).padStart(2,"0"); });
+
+const DOMAINS = [...new Set(IDEAS.map(i=>i.cat))].sort();
+
+/* ============================================================
+   3. STATE + STORAGE
+   ============================================================ */
+const LS = { saved:"hf_saved_v1", intro:"hf_intro_v1", mode:"hf_mode_v1" };
+
+function lsGet(k, fb){ try{ const v = localStorage.getItem(k); return v===null?fb:v; }catch(e){ return fb; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+let saved = new Set();
+try { saved = new Set(JSON.parse(lsGet(LS.saved, "[]")) || []); } catch(e){ saved = new Set(); }
+saved = new Set([...saved].filter(id => typeof id === "number" && IDEAS[id]));
+
+let mode = lsGet(LS.mode, "foryou");
+if (!MODES[mode] && !String(mode).startsWith("cat:")) mode = "foryou";
+
+let deck = [], pos = 0, history = [], currentScreen = "discover";
+let sheetOpen = false, sheetIdea = null, sheetAdvance = false;
+
+/* ============================================================
+   4. DOM
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const stack     = $("#stack");
+const chipsEl   = $("#chips");
+const modeGrid  = $("#modeGrid");
+const catGrid   = $("#catGrid");
+const savedList = $("#savedList");
+const savedFoot = $("#savedFooter");
+const sheetEl   = $("#sheet");
+const scrimEl   = $("#scrim");
+const toastEl   = $("#toast");
+const railModes = $("#railModes");
+
+/* ============================================================
+   5. HELPERS
+   ============================================================ */
+function filterFor(id){
+  if (String(id).startsWith("cat:")){
+    const c = String(id).slice(4);
+    return i => i.cat === c;
+  }
+  return (MODES[id] || MODES.foryou).f;
+}
+function labelFor(id){
+  if (String(id).startsWith("cat:")) return String(id).slice(4);
+  return (MODES[id] || MODES.foryou).label;
+}
+function shuffle(a){
+  for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+let toastTimer = null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toastEl.classList.remove("on"), 1500);
+}
+function persistSaved(){ lsSet(LS.saved, JSON.stringify([...saved])); }
+
+/* ============================================================
+   6. DECK
+   ============================================================ */
+function buildDeck(id){
+  const f = filterFor(id);
+  deck = shuffle(IDEAS.filter(f).slice());
+  pos = 0;
+  history = [];
+}
+
+function makeCard(idea, kind){
+  const el = document.createElement("article");
+  el.className = "card " + kind;
+  el.dataset.id = idea.id;
+  el.style.setProperty("--accent", CAT_ACCENT[idea.cat] || "#e0ab5a");
+  el.innerHTML =
+    '<div class="card-glow"></div>' +
+    '<div class="ov ov-keep" aria-hidden="true">Keep</div>' +
+    '<div class="ov ov-pass" aria-hidden="true">Pass</div>' +
+    '<div class="ov ov-up" aria-hidden="true">Explore</div>' +
+    '<div class="ov ov-down" aria-hidden="true">Back</div>' +
+    '<div class="card-top">' +
+      '<span class="num">№ ' + idea.num + '</span>' +
+      '<span class="cat">' + esc(idea.cat) + '</span>' +
+    '</div>' +
+    '<h2 class="card-title">' + esc(idea.title) + '</h2>' +
+    '<p class="card-concept">' + esc(idea.concept) + '</p>' +
+    '<div class="card-spacer"></div>' +
+    '<div class="card-meta">' +
+      '<div><span class="lbl">Horizon</span><span class="val">' + esc(idea.horizon) + '</span></div>' +
+      '<div><span class="lbl">Reach</span><span class="val">' + esc(idea.reach) + '</span></div>' +
+      '<div><span class="lbl">AI leverage</span><span class="val">' + esc(idea.leverage) + '</span></div>' +
+      '<div><span class="lbl">Resources</span><span class="val">' + esc(idea.resource) + '</span></div>' +
+    '</div>' +
+    '<div class="card-hint">Swipe up or tap to explore</div>';
+  if (kind === "top"){
+    el.setAttribute("tabindex","0");
+    el.setAttribute("role","group");
+    el.setAttribute("aria-label", idea.cat + " idea: " + idea.title);
+  }
+  return el;
+}
+
+function renderStack(){
+  stack.innerHTML = "";
+  if (pos >= deck.length || deck.length === 0){ renderEnd(); return; }
+  const next = deck[pos+1];
+  if (next) stack.appendChild(makeCard(next, "back"));
+  stack.appendChild(makeCard(deck[pos], "top"));
+  updateHUD();
+}
+
+function renderEnd(){
+  const n = deck.length;
+  if (n === 0){
+    stack.innerHTML =
+      '<div class="endcard"><div class="num">Nothing here yet</div>' +
+      '<h2>No ideas match this mode.</h2>' +
+      '<p>Try a different mode or domain — the deck contains ' + IDEAS.length + ' ideas across ' + DOMAINS.length + ' domains.</p>' +
+      '<div class="end-actions">' +
+        '<button data-end="modes">Browse modes and domains</button>' +
+        '<button data-end="reset">Shuffle the full deck</button>' +
+      '</div></div>';
+  } else {
+    stack.innerHTML =
+      '<div class="endcard"><div class="num">Deck complete</div>' +
+      '<h2>You have seen all ' + n + ' idea' + (n===1?"":"s") + ' in ' + esc(labelFor(mode)) + '.</h2>' +
+      '<p>Kept ideas stay in your browser. Nothing is uploaded anywhere.</p>' +
+      '<div class="end-actions">' +
+        '<button data-end="reset">Shuffle this mode again</button>' +
+        '<button data-end="modes">Try another mode</button>' +
+        '<button data-end="saved">View kept ideas</button>' +
+      '</div></div>';
+  }
+  updateHUD();
+}
+
+function updateHUD(){
+  $("#stat-pos").textContent   = deck.length ? Math.min(pos+1, deck.length) : 0;
+  $("#stat-total").textContent = deck.length;
+  $("#stat-saved").textContent = saved.size;
+  $("#stat-mode").textContent  = labelFor(mode);
+  document.querySelectorAll(".chip").forEach(c=>{
+    c.classList.toggle("on", c.dataset.mode === mode);
+  });
+  document.querySelectorAll("[data-mode-tile]").forEach(t=>{
+    t.classList.toggle("on", t.dataset.modeTile === mode);
+  });
+  railModes.querySelectorAll("button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.mode === mode);
+  });
+}
+
+/* ============================================================
+   7. ACTIONS
+   ============================================================ */
+function addSaved(id){ saved.add(id); persistSaved(); updateHUD(); }
+function removeSaved(id){ saved.delete(id); persistSaved(); updateHUD(); if (currentScreen==="saved") renderSaved(); }
+
+function commit(idea, action, leavingCard){
+  history.push({id:idea.id, action:action});
+  if (action === "keep") addSaved(idea.id);
+  pos++;
+
+  if (leavingCard && leavingCard.parentNode) leavingCard.remove();
+
+  const back = stack.querySelector(".card.back");
+  if (back){ back.classList.remove("back"); back.classList.add("top"); back.style.transform=""; back.style.opacity=""; }
+
+  const nextIdea = deck[pos+1];
+  if (nextIdea) stack.insertBefore(makeCard(nextIdea, "back"), stack.firstChild);
+
+  if (pos >= deck.length || !stack.querySelector(".card.top")) renderStack();
+  updateHUD();
+}
+
+function flyOut(card, dirX, dirY){
+  const w = window.innerWidth, h = window.innerHeight;
+  card.style.transition = "transform .46s cubic-bezier(.3,.72,.3,1), opacity .46s ease";
+  card.style.transform =
+    "translate3d(" + (dirX * w * 1.1) + "px," + (dirY * h * 1.1) + "px,0) rotate(" + (dirX*17) + "deg)";
+  card.style.opacity = "0";
+}
+
+function springBack(card){
+  card.style.transition = "transform .5s cubic-bezier(.2,.9,.28,1.06), opacity .3s";
+  card.style.transform = "";
+  card.style.opacity = "";
+  clearOverlays(card);
+}
+
+function clearOverlays(card){
+  card.querySelectorAll(".ov").forEach(o=>o.style.opacity = 0);
+}
+
+function doPass(){
+  const card = stack.querySelector(".card.top");
+  if (!card) return;
+  const idea = deck[pos];
+  if (!idea) return;
+  flyOut(card, -1, 0);
+  setTimeout(()=>commit(idea, "pass", card), 400);
+}
+
+function doKeep(){
+  const card = stack.querySelector(".card.top");
+  if (!card) return;
+  const idea = deck[pos];
+  if (!idea) return;
+  flyOut(card, 1, 0);
+  toast("Kept");
+  setTimeout(()=>commit(idea, "keep", card), 400);
+}
+
+function doExplore(){
+  const idea = deck[pos];
+  if (!idea) return;
+  const card = stack.querySelector(".card.top");
+  if (card) springBack(card);
+  openSheet(idea, true);
+}
+
+function undo(){
+  if (!history.length){ toast("Nothing to go back to"); return; }
+  const h = history.pop();
+  if (h.action === "keep"){ saved.delete(h.id); persistSaved(); }
+  pos = Math.max(0, pos - 1);
+  renderStack();
+  const top = stack.querySelector(".card.top");
+  if (top){ top.classList.add("enter"); setTimeout(()=>top.classList.remove("enter"), 460); }
+  updateHUD();
+  toast("Back");
+}
+
+/* ============================================================
+   8. SWIPE ENGINE
+   ============================================================ */
+let drag = null;
+
+stack.addEventListener("pointerdown", e=>{
+  const card = e.target.closest(".card.top");
+  if (!card) return;
+  if (e.target.closest("button")) return;
+  if (sheetOpen) return;
+  drag = {
+    card: card, id: e.pointerId,
+    x0: e.clientX, y0: e.clientY,
+    dx: 0, dy: 0, vx: 0, vy: 0,
+    px: e.clientX, py: e.clientY, pt: performance.now(),
+    t0: performance.now()
+  };
+  try { card.setPointerCapture(e.pointerId); } catch(err){}
+  card.classList.add("dragging");
+});
+
+stack.addEventListener("pointermove", e=>{
+  if (!drag || e.pointerId !== drag.id) return;
+  const now = performance.now();
+  const dt = Math.max(1, now - drag.pt);
+  drag.vx = (e.clientX - drag.px) / dt;
+  drag.vy = (e.clientY - drag.py) / dt;
+  drag.px = e.clientX; drag.py = e.clientY; drag.pt = now;
+  drag.dx = e.clientX - drag.x0;
+  drag.dy = e.clientY - drag.y0;
+  applyDrag();
+}, {passive:true});
+
+function applyDrag(){
+  if (!drag) return;
+  const card = drag.card, dx = drag.dx, dy = drag.dy;
+  card.style.transform = "translate3d(" + dx + "px," + dy + "px,0) rotate(" + (dx * 0.055) + "deg)";
+  const horiz = Math.abs(dx) > Math.abs(dy);
+  setOv(card, ".ov-keep", horiz ? clamp01(dx/130) : 0);
+  setOv(card, ".ov-pass", horiz ? clamp01(-dx/130) : 0);
+  setOv(card, ".ov-up",   !horiz ? clamp01(-dy/130) : 0);
+  setOv(card, ".ov-down", !horiz ? clamp01(dy/130) : 0);
+}
+function clamp01(v){ return Math.max(0, Math.min(1, v)); }
+function setOv(card, sel, v){
+  const el = card.querySelector(sel);
+  if (el) el.style.opacity = v;
+}
+
+function endDrag(e){
+  if (!drag || e.pointerId !== drag.id) return;
+  const d = drag; drag = null;
+  d.card.classList.remove("dragging");
+
+  const dist = Math.hypot(d.dx, d.dy);
+  const elapsed = performance.now() - d.t0;
+
+  // Tap → explore
+  if (dist < 8 && elapsed < 420){
+    springBack(d.card);
+    const idea = deck[pos];
+    if (idea) openSheet(idea, true);
+    return;
+  }
+
+  const TH = Math.min(108, window.innerWidth * 0.24);
+  const horiz = Math.abs(d.dx) > Math.abs(d.dy);
+  let action = null;
+
+  if (horiz){
+    if (d.dx >  TH || (d.vx >  0.62 && d.dx >  38)) action = "keep";
+    else if (d.dx < -TH || (d.vx < -0.62 && d.dx < -38)) action = "pass";
+  } else {
+    if (d.dy < -TH || (d.vy < -0.66 && d.dy < -38)) action = "explore";
+    else if (d.dy >  TH || (d.vy >  0.66 && d.dy >  38)) action = "back";
+  }
+
+  if (!action){ springBack(d.card); return; }
+
+  if (action === "explore"){ springBack(d.card); const idea = deck[pos]; if (idea) openSheet(idea, true); return; }
+  if (action === "back"){ springBack(d.card); undo(); return; }
+
+  const idea = deck[pos];
+  if (!idea){ springBack(d.card); return; }
+
+  if (action === "pass"){ flyOut(d.card, -1, 0); setTimeout(()=>commit(idea, "pass", d.card), 400); }
+  if (action === "keep"){ flyOut(d.card,  1, 0); toast("Kept"); setTimeout(()=>commit(idea, "keep", d.card), 400); }
+}
+stack.addEventListener("pointerup", endDrag);
+stack.addEventListener("pointercancel", endDrag);
+stack.addEventListener("lostpointercapture", e=>{ if (drag && e.pointerId === drag.id) endDrag(e); });
+
+/* stack-level button handling (end card + action bar lives outside) */
+stack.addEventListener("click", e=>{
+  const b = e.target.closest("[data-end]");
+  if (!b) return;
+  const a = b.dataset.end;
+  if (a === "reset"){ buildDeck(mode); renderStack(); }
+  if (a === "modes"){ show("modes"); }
+  if (a === "saved"){ show("saved"); }
+});
+
+document.querySelector(".actions").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const a = b.dataset.act;
+  if (a === "pass") doPass();
+  if (a === "keep") doKeep();
+  if (a === "explore") doExplore();
+});
+
+/* ============================================================
+   9. SHEET
+   ============================================================ */
+function impactRow(label, value){
+  return '<div><span class="lbl">' + label + '</span><span class="val">' + esc(value) + '</span></div>';
+}
+
+function openSheet(idea, advance){
+  sheetIdea = idea; sheetAdvance = !!advance;
+  const ac = CAT_ACCENT[idea.cat] || "#e0ab5a";
+  const isSaved = saved.has(idea.id);
+
+  sheetEl.innerHTML =
+    '<button class="sheet-close" data-act="close" aria-label="Close detail panel">✕</button>' +
+    '<div class="sheet-scroll">' +
+      '<div class="sheet-meta">' +
+        '<span class="num">№ ' + idea.num + '</span>' +
+        '<span class="cat" style="color:' + ac + '">' + esc(idea.cat) + '</span>' +
+      '</div>' +
+      '<h2 id="sheetTitle">' + esc(idea.title) + '</h2>' +
+      '<p class="sheet-concept">' + esc(idea.concept) + '</p>' +
+      '<section><h3>The idea</h3><p>' + esc(idea.body) + '</p></section>' +
+      '<section><h3>How AI contributes</h3><p>' + esc(idea.ai) + '</p></section>' +
+      '<section><h3>Who benefits</h3><p>' + esc(idea.who) + '</p></section>' +
+      '<section><h3>Path to implementation</h3><p>' + esc(idea.path) + '</p></section>' +
+      '<section><h3>Main obstacle</h3><p>' + esc(idea.obstacle) + '</p></section>' +
+      '<section class="reality"><h3>Reality check</h3><ul>' +
+        idea.reality.map(r=>'<li>' + esc(r) + '</li>').join("") +
+      '</ul></section>' +
+      '<section><h3>Why this matters</h3><p>' + esc(idea.why) + '</p></section>' +
+      '<section class="impact"><h3>Impact model</h3><div class="impact-grid">' +
+        impactRow("Potential reach", idea.reach) +
+        impactRow("Time horizon", idea.horizon) +
+        impactRow("Feasibility", idea.feasibility) +
+        impactRow("AI leverage", idea.leverage) +
+        impactRow("Resource requirement", idea.resource) +
+      '</div></section>' +
+      '<div style="height:8px"></div>' +
+    '</div>' +
+    '<div class="sheet-actions">' +
+      '<button data-act="pass">Pass</button>' +
+      '<button data-act="save" class="primary' + (isSaved ? " saved" : "") + '">' +
+        (isSaved ? "Kept" : "Keep") +
+      '</button>' +
+    '</div>';
+
+  sheetEl.classList.add("open");
+  sheetEl.setAttribute("aria-hidden","false");
+  scrimEl.classList.add("open");
+  document.body.classList.add("sheet-open");
+  sheetOpen = true;
+  sheetEl.querySelector(".sheet-scroll").scrollTop = 0;
+  setTimeout(()=>{ const c = sheetEl.querySelector(".sheet-close"); if (c) c.focus(); }, 60);
+}
+
+function closeSheet(){
+  if (!sheetOpen) return;
+  sheetOpen = false;
+  sheetEl.classList.remove("open");
+  sheetEl.setAttribute("aria-hidden","true");
+  scrimEl.classList.remove("open");
+  document.body.classList.remove("sheet-open");
+  sheetIdea = null;
+}
+
+sheetEl.addEventListener("click", e=>{
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const a = b.dataset.act;
+  const idea = sheetIdea;
+
+  if (a === "close"){ closeSheet(); return; }
+
+  if (a === "save" && idea){
+    if (saved.has(idea.id)){ removeSaved(idea.id); b.classList.remove("saved"); b.textContent = "Keep"; toast("Removed"); }
+    else { addSaved(idea.id); b.classList.add("saved"); b.textContent = "Kept"; toast("Kept"); }
+    return;
+  }
+
+  if (a === "pass" && idea){
+    closeSheet();
+    if (sheetAdvance && deck[pos] && deck[pos].id === idea.id){ doPass(); }
+    return;
+  }
+});
+
+scrimEl.addEventListener("click", closeSheet);
+
+/* ============================================================
+   10. NAVIGATION
+   ============================================================ */
+function show(name){
+  currentScreen = name;
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  const el = document.getElementById("s-" + name);
+  if (el) el.classList.add("on");
+  document.querySelectorAll(".dock button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.nav === name);
+  });
+  if (name === "saved") renderSaved();
+  if (name === "modes") renderModeGrids();
+}
+
+document.querySelector(".dock").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-nav]");
+  if (!b) return;
+  show(b.dataset.nav);
+});
+
+function setMode(id){
+  mode = id;
+  lsSet(LS.mode, id);
+  buildDeck(id);
+  renderStack();
+  updateHUD();
+  show("discover");
+  const sc = document.querySelector("#s-discover .scroller");
+  if (sc) sc.scrollTop = 0;
+}
+
+/* ---------- chips ---------- */
+function renderChips(){
+  chipsEl.innerHTML = Object.keys(MODES).map(k =>
+    '<button class="chip" role="tab" data-mode="' + k + '">' + MODES[k].label + '</button>'
+  ).join("");
+  updateHUD();
+}
+chipsEl.addEventListener("click", e=>{
+  const b = e.target.closest(".chip");
+  if (!b) return;
+  setMode(b.dataset.mode);
+});
+
+/* ---------- rail modes ---------- */
+function renderRailModes(){
+  railModes.innerHTML = Object.keys(MODES).map(k =>
+    '<button data-mode="' + k + '">' + MODES[k].label + '</button>'
+  ).join("");
+  updateHUD();
+}
+railModes.addEventListener("click", e=>{
+  const b = e.target.closest("button[data-mode]");
+  if (!b) return;
+  setMode(b.dataset.mode);
+});
+
+/* ---------- modes + categories grid ---------- */
+function renderModeGrids(){
+  modeGrid.innerHTML = Object.keys(MODES).map(k=>{
+    const n = IDEAS.filter(MODES[k].f).length;
+    return '<button class="tile" data-mode-tile="' + k + '">' +
+      '<span class="t-name">' + MODES[k].label + '</span>' +
+      '<span class="t-count">' + n + ' ideas · ' + MODES[k].blurb + '</span>' +
+    '</button>';
+  }).join("");
+
+  catGrid.innerHTML = DOMAINS.map(c=>{
+    const n = IDEAS.filter(i=>i.cat===c).length;
+    return '<button class="tile" data-mode-tile="cat:' + c + '">' +
+      '<span class="t-name" style="color:' + (CAT_ACCENT[c]||"#fff") + '">' + c + '</span>' +
+      '<span class="t-count">' + n + ' idea' + (n===1?"":"s") + '</span>' +
+    '</button>';
+  }).join("");
+
+  updateHUD();
+}
+document.querySelector("#s-modes").addEventListener("click", e=>{
+  const b = e.target.closest("[data-mode-tile]");
+  if (!b) return;
+  setMode(b.dataset.modeTile);
+});
+
+/* ---------- saved ---------- */
+function renderSaved(){
+  const ids = [...saved].filter(id => IDEAS[id]);
+  $("#savedLede").textContent = ids.length
+    ? "Ideas you swiped right on. Stored in this browser only — nothing is uploaded."
+    : "Ideas you swiped right on. Stored in this browser only.";
+
+  if (!ids.length){
+    savedList.innerHTML =
+      '<div class="empty"><strong>No kept ideas yet</strong>' +
+      'Swipe right on a card, or press the Keep button, and it will appear here.</div>';
+    savedFoot.innerHTML = "";
+    return;
+  }
+
+  savedList.innerHTML = ids.map(id=>{
+    const i = IDEAS[id];
+    const ac = CAT_ACCENT[i.cat] || "#e0ab5a";
+    return '<article class="saved-item">' +
+      '<div class="s-top">' +
+        '<span class="num">№ ' + i.num + '</span>' +
+        '<span class="cat" style="color:' + ac + '">' + esc(i.cat) + '</span>' +
+      '</div>' +
+      '<h3>' + esc(i.title) + '</h3>' +
+      '<p>' + esc(i.concept) + '</p>' +
+      '<div class="s-actions">' +
+        '<button data-open="' + i.id + '">Open</button>' +
+        '<button data-remove="' + i.id + '">Remove</button>' +
+      '</div>' +
+    '</article>';
+  }).join("");
+
+  savedFoot.innerHTML =
+    '<div style="margin-top:18px"><button class="s-actions" style="border:none;padding:0"></button></div>' +
+    '<button id="clearAll" style="margin-top:6px;padding:11px 18px;border-radius:12px;border:1px solid var(--line);' +
+    'background:transparent;color:var(--dim);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">' +
+    'Clear all kept ideas</button>';
+  savedFoot.innerHTML = savedFoot.innerHTML.replace('<button class="s-actions" style="border:none;padding:0"></button>','');
+
+  const clearBtn = document.getElementById("clearAll");
+  if (clearBtn) clearBtn.addEventListener("click", ()=>{
+    if (confirm("Remove all kept ideas? This cannot be undone.")){
+      saved.clear(); persistSaved(); renderSaved(); updateHUD(); toast("Cleared");
+    }
+  });
+}
+
+savedList.addEventListener("click", e=>{
+  const o = e.target.closest("[data-open]");
+  const r = e.target.closest("[data-remove]");
+  if (o){ const idea = IDEAS[Number(o.dataset.open)]; if (idea) openSheet(idea, false); return; }
+  if (r){ removeSaved(Number(r.dataset.remove)); toast("Removed"); }
+});
+
+/* ============================================================
+   11. KEYBOARD
+   ============================================================ */
+document.addEventListener("keydown", e=>{
+  if (e.key === "Escape"){ if (sheetOpen) closeSheet(); return; }
+
+  const tag = (e.target && e.target.tagName || "").toLowerCase();
+  if (tag === "input" || tag === "textarea") return;
+
+  if (sheetOpen) return;
+  if (currentScreen !== "discover") return;
+
+  switch (e.key){
+    case "ArrowLeft":  e.preventDefault(); doPass(); break;
+    case "ArrowRight": e.preventDefault(); doKeep(); break;
+    case "ArrowUp":    e.preventDefault(); doExplore(); break;
+    case "ArrowDown":  e.preventDefault(); undo(); break;
+  }
+});
+
+/* ============================================================
+   12. INTRO
+   ============================================================ */
+(function initIntro(){
+  const intro = $("#intro");
+  const btn = $("#introBtn");
+  const b = $("#introB");
+  const seen = lsGet(LS.intro, null);
+
+  if (seen){
+    intro.parentNode.removeChild(intro);
+    return;
+  }
+
+  let dismissed = false;
+  function dismiss(){
+    if (dismissed) return;
+    dismissed = true;
+    lsSet(LS.intro, "1");
+    intro.classList.add("hide");
+    setTimeout(()=>{ if (intro.parentNode) intro.parentNode.removeChild(intro); }, 850);
+  }
+
+  setTimeout(()=>{
+    b.classList.add("in");
+    btn.classList.add("in");
+  }, 1900);
+
+  btn.addEventListener("click", ev=>{ ev.stopPropagation(); dismiss(); });
+  intro.addEventListener("click", dismiss);
+})();
+
+/* ============================================================
+   13. BOOT
+   ============================================================ */
+renderChips();
+renderRailModes();
+renderModeGrids();
+buildDeck(mode);
+renderStack();
+renderSaved();
+show("discover");
+
+/* keep the sheet from being reachable by tab when closed */
+sheetEl.addEventListener("transitionend", ()=>{
+  if (!sheetOpen) sheetEl.setAttribute("aria-hidden","true");
+});
+
+/* resize: reset any half-dragged card */
+window.addEventListener("resize", ()=>{
+  const top = stack.querySelector(".card.top");
+  if (top && !drag) { top.style.transform = ""; top.style.opacity = ""; clearOverlays(top); }
+});
+
+/* expose a tiny hook for anyone who wants to extend the library later */
+window.HumanFlourishing = { IDEAS, MODES, DOMAINS, setMode, openSheet };
+</script>
+</body>
+</html>
